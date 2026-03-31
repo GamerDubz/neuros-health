@@ -10,10 +10,11 @@ export default function TrackerPage() {
   // Date logic
   const today = new Date();
   const dateKey = today.toISOString().split('T')[0];
-  const todayLog = logs.find(l => l.date === dateKey) || { date: dateKey, takenMeds: [] };
+  const todayLogs = logs.filter(l => l.dateStr === dateKey);
+  const takenMeds = todayLogs.map(l => l.medicationId);
 
   const totalMeds = medications.length > 0 ? medications.length : 4; 
-  const takenCount = todayLog.takenMeds.length;
+  const takenCount = takenMeds.length;
   const progressPercent = Math.min(100, Math.round((takenCount / totalMeds) * 100));
 
   // Determine stage from streak
@@ -59,7 +60,7 @@ export default function TrackerPage() {
              streak={streak}
              progressPct={progressPercent}
              sizeVariant="large"
-             isWilted={streak === 0 && user.stage > 1} 
+             isWilted={streak === 0 && treeStage > 1} 
            />
         </div>
 

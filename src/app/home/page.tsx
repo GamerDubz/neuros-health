@@ -8,8 +8,10 @@ import { TreeHeroCard } from "@/components/HealthTree/TreeHeroCard";
 import { FirstMedicationSetup } from "@/components/FirstMedicationSetup";
 import { AnimatePresence } from "framer-motion";
 
-export default function Dashboard() {
-  const { user, logs, updateLog, medications } = useStore();
+import { Suspense } from "react";
+
+function DashboardContent() {
+  const { user, logs, checkIn, medications } = useStore();
   const searchParams = useSearchParams();
   const [showSetup, setShowSetup] = useState(false);
   const [pulseKey, setPulseKey] = useState(0);
@@ -21,21 +23,23 @@ export default function Dashboard() {
     }
   }, [searchParams]);
 
-  // Date logic
+   // Date logic
   const today = new Date();
   const dateString = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   const dateKey = today.toISOString().split('T')[0];
-  const todayLog = logs.find(l => l.date === dateKey) || { date: dateKey, takenMeds: [] };
+  
+  const todayLogs = logs.filter(l => l.dateStr === dateKey);
+  const takenMeds = todayLogs.map(l => l.medicationId);
 
   const handleTakeMed = (id: string) => {
-    if (!todayLog.takenMeds.includes(id)) {
-      updateLog(dateKey, [...todayLog.takenMeds, id]);
+    if (!takenMeds.includes(id)) {
+      checkIn(id, dateKey);
       setPulseKey(prev => prev + 1); // Trigger tree ping
     }
   };
 
   const totalMeds = medications.length > 0 ? medications.length : 4; // Mock standard if empty
-  const takenCount = todayLog.takenMeds.length;
+  const takenCount = takenMeds.length;
   const progressPercent = Math.min(100, Math.round((takenCount / totalMeds) * 100));
 
   // Determine stage from streak (simplified logic based on master prompt Part 4.1)
@@ -84,7 +88,7 @@ export default function Dashboard() {
              progressPct={progressPercent}
              daysToNext={daysToNext}
              pulseKey={pulseKey}
-             isWilted={streak === 0 && user.stage > 1} // Wilt if they broke streak but had progress before
+             isWilted={streak === 0 && treeStage > 1} // Wilt if they broke streak but had progress before
            />
         </div>
 
@@ -195,5 +199,13 @@ export default function Dashboard() {
 
       </div>
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[50vh]"><p className="text-on-surface-variant animate-pulse">Loading dashboard...</p></div>}>
+      <DashboardContent />
+    </Suspense>
   );
 }

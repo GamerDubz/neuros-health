@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, Variants } from "framer-motion";
 
 interface BonusesIncentivesCardProps {
   // Content
@@ -71,7 +71,7 @@ export function BonusesIncentivesCard(props: BonusesIncentivesCardProps) {
   const innerDots = generateDots(innerDotsCount!, 155, 203, 200);
 
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: {
       opacity: 0,
       y: 20,
@@ -91,7 +91,7 @@ export function BonusesIncentivesCard(props: BonusesIncentivesCardProps) {
     }
   };
 
-  const dotVariants = {
+  const dotVariants: Variants = {
     hidden: {
       opacity: 0,
       scale: 0,
@@ -112,7 +112,7 @@ export function BonusesIncentivesCard(props: BonusesIncentivesCardProps) {
       className="w-full max-w-md"
       initial={shouldAnimate ? "hidden" : "visible"}
       animate="visible"
-      variants={shouldAnimate ? containerVariants : {}}
+      variants={shouldAnimate ? containerVariants : undefined}
     >
       <motion.div
         className={`${backgroundColor} ${borderColor} border rounded-xl overflow-hidden shadow-lg`}

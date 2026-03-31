@@ -19,7 +19,7 @@ export interface Medication {
 export interface UserProfile {
   name: string;
   isPremium: boolean;
-  streak: number;
+  streakDays: number;
   points: number;
   badges: string[];
   conditions: string[];
@@ -72,7 +72,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile>({
     name: "Alex",
     isPremium: false,
-    streak: 6,
+    streakDays: 6,
     points: 450,
     badges: ["First Triage", "3-Day Streak"],
     conditions: ["Type 2 Diabetes", "Hypertension"],
@@ -89,7 +89,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const newLogs = [...prev, { medicationId, dateStr, taken: true }];
       
       setUser(current => {
-        let newStreak = current.streak + 1;
+        let newStreak = (current.streakDays || 0) + 1;
         let newBadges = [...current.badges];
         
         // Gamification unlocking
@@ -98,7 +98,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return {
           ...current,
           points: current.points + 10,
-          streak: newStreak,
+          streakDays: newStreak,
           badges: newBadges
         };
       });
