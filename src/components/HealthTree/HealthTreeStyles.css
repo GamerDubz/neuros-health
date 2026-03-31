@@ -1,0 +1,345 @@
+/* 
+  Neuros Health — Health Tree SVG System
+  Complete Visual & Animation Styles
+*/
+
+/* 1. ANIMATIONS */
+
+@keyframes treeSway {
+  0%   { transform: rotate(-1.2deg) translateX(-0.5px); }
+  25%  { transform: rotate(0.4deg)  translateX(0.3px); }
+  50%  { transform: rotate(1.2deg)  translateX(0.8px); }
+  75%  { transform: rotate(0.3deg)  translateX(0.2px); }
+  100% { transform: rotate(-1.2deg) translateX(-0.5px); }
+}
+
+@keyframes treeGrowIn {
+  0%   {
+    opacity: 0;
+    transform: scale(0.88) translateY(6px);
+    transform-origin: 50% 95%;
+  }
+  60%  {
+    opacity: 1;
+    transform: scale(1.04) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes treeGrowOut {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.94); }
+}
+
+@keyframes treeWilt {
+  0%   { transform: rotate(0deg) translateY(0); transform-origin: 50% 95%; }
+  100% { transform: rotate(-8deg) translateY(4px); transform-origin: 50% 95%; }
+}
+
+@keyframes treeRevive {
+  0%   { transform: rotate(-8deg) translateY(4px); transform-origin: 50% 95%; }
+  40%  { transform: rotate(3deg) translateY(-2px); }
+  70%  { transform: rotate(-1.5deg) translateY(0); }
+  100% { transform: rotate(0deg) translateY(0); }
+}
+
+@keyframes treePulse {
+  0%   { transform: scale(1); transform-origin: 50% 95%; }
+  30%  { transform: scale(1.03) translateY(-2px); }
+  60%  { transform: scale(0.99); }
+  100% { transform: scale(1); }
+}
+
+@keyframes particleBurst {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2); }
+}
+
+@keyframes firefly {
+  0%   { opacity: 0; }
+  10%  { opacity: 0; }
+  20%  { opacity: 0.8; }
+  35%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes sproutCelebration {
+  0%   {
+    transform: scaleY(0) translateY(8px);
+    transform-origin: 50% 100%;
+    opacity: 0;
+  }
+  50%  {
+    transform: scaleY(1.08) translateY(-3px);
+    opacity: 1;
+  }
+  75%  {
+    transform: scaleY(0.97) translateY(0);
+  }
+  100% {
+    transform: scaleY(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+
+/* 2. BASE SVG & SWAY CONFIG */
+
+.tree-svg {
+  transform-origin: 50% 95%; /* Pivot at the base of the trunk */
+  animation: treeSway 5s ease-in-out infinite;
+  display: block;
+}
+
+/* Stage-specific sway durations based on Part 4.1 */
+.tree-svg[data-stage="1"] { animation-duration: 6s; scale: 1.6; }
+.tree-svg[data-stage="2"] { animation-duration: 5.5s; scale: 1.35; }
+.tree-svg[data-stage="3"] { animation-duration: 5s; }
+.tree-svg[data-stage="4"] { animation-duration: 5s; }
+.tree-svg[data-stage="5"] { animation-duration: 4.5s; }
+.tree-svg[data-stage="6"] { animation-duration: 4.5s; }
+.tree-svg[data-stage="7"] { animation-duration: 6s; }
+
+/* Fireflies */
+#firefly-1 { animation: firefly 4s ease-in-out infinite 0s; }
+#firefly-2 { animation: firefly 4s ease-in-out infinite 1.5s; }
+#firefly-3 { animation: firefly 4s ease-in-out infinite 2.8s; }
+
+
+/* 3. SIZE VARIANTS */
+
+.tree-micro    { width: 24px;  height: 24px; }
+.tree-tiny     { width: 40px;  height: 40px; }
+.tree-small    { width: 64px;  height: 64px; }
+.tree-medium   { width: 128px; height: 128px; }
+.tree-standard { width: 192px; height: 192px; }
+.tree-large    { width: 256px; height: 256px; }
+.tree-hero     { width: 320px; height: 320px; }
+.tree-display  { width: 480px; height: 480px; }
+
+/* Drop Shadows for Elevation */
+.tree-standard,
+.tree-large,
+.tree-hero,
+.tree-display {
+  filter: drop-shadow(0 12px 24px rgba(0, 104, 93, 0.15));
+}
+
+.tree-micro,
+.tree-tiny {
+  filter: none;
+}
+
+.tree-small {
+  filter: drop-shadow(0 4px 8px rgba(0, 104, 93, 0.12));
+}
+
+
+/* 4. STATE CLASSES */
+
+.tree-stage-out {
+  animation: treeGrowOut 0.4s ease forwards;
+}
+
+.tree-stage-in {
+  animation: treeGrowIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.tree-svg.wilted {
+  animation: treeWilt 1.2s ease forwards;
+  filter: saturate(0.5) brightness(0.85);
+}
+
+.tree-svg.reviving {
+  animation: treeRevive 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  filter: saturate(1) brightness(1);
+  transition: filter 1.5s ease;
+}
+
+.tree-svg.pulse {
+  animation: treePulse 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tree-celebration {
+  animation: sproutCelebration 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+
+/* 5. PARTICLES */
+
+.tree-particle-container {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.tree-particle {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 9999px;
+  background: var(--color-tertiary-fixed, #85f8c2);
+  pointer-events: none;
+  animation: particleBurst 0.8s ease-out forwards;
+}
+
+/* 6 particles, each with a different direction via CSS custom properties */
+.tree-particle:nth-child(1) { --tx: -24px; --ty: -32px; }
+.tree-particle:nth-child(2) { --tx: 0px;   --ty: -40px; }
+.tree-particle:nth-child(3) { --tx: 24px;  --ty: -32px; }
+.tree-particle:nth-child(4) { --tx: -36px; --ty: -16px; }
+.tree-particle:nth-child(5) { --tx: 36px;  --ty: -16px; }
+.tree-particle:nth-child(6) { --tx: 0px;   --ty: -48px; animation-delay: 0.1s; }
+
+
+/* 6. HERO CARD */
+
+.tree-hero-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem; /* 24px */
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  transition: background 1.5s ease;
+}
+
+/* Stage-specific backgrounds */
+.tree-hero-card[data-stage="1"], .tree-hero-card[data-stage="1"] {
+  background: linear-gradient(160deg, var(--color-surface-container-low) 0%, var(--color-surface-container) 100%);
+}
+.tree-hero-card[data-stage="2"], .tree-hero-card[data-stage="2"] {
+  background: linear-gradient(160deg, var(--color-surface-container) 0%, var(--color-surface-container-highest) 100%);
+}
+.tree-hero-card[data-stage="3"], .tree-hero-card[data-stage="3"] {
+  background: linear-gradient(150deg, var(--color-primary-fixed) 0%, var(--color-surface-container-low) 100%);
+}
+.tree-hero-card[data-stage="4"], .tree-hero-card[data-stage="4"] {
+  background: linear-gradient(145deg, var(--color-primary-fixed-dim) 0%, var(--color-surface-container-low) 100%);
+}
+.tree-hero-card[data-stage="5"], .tree-hero-card[data-stage="5"] {
+  background: linear-gradient(140deg, var(--color-primary-fixed-dim) 10%, var(--color-primary-fixed) 50%, var(--color-surface-container-low) 100%);
+}
+.tree-hero-card[data-stage="6"], .tree-hero-card[data-stage="6"] {
+  background: linear-gradient(135deg, var(--color-primary-fixed) 0%, var(--color-primary-fixed-dim) 40%, var(--color-surface-container) 100%);
+}
+.tree-hero-card[data-stage="7"], .tree-hero-card[data-stage="7"] {
+  background: linear-gradient(130deg, var(--color-primary-fixed-dim) 0%, var(--color-primary-fixed) 30%, var(--color-tertiary-fixed) 60%, var(--color-surface-container-low) 100%);
+}
+
+@media (min-width: 768px) {
+  .tree-hero-card {
+    min-height: 480px;
+    padding: 48px;
+    border-radius: 2rem;
+  }
+}
+
+/* Streak Chip */
+.tree-streak-chip {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(21, 28, 39, 0.08);
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.8125rem; /* 13px */
+  font-weight: 700;
+  color: var(--color-on-surface);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.tree-streak-chip.broken {
+  background: rgba(255, 218, 214, 0.90); /* error-container */
+  color: #93000a; /* on-error-container */
+}
+
+/* Tree Labels */
+.tree-label-block {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.tree-stage-name {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 800;
+  color: var(--color-on-primary-fixed);
+  letter-spacing: -0.02em;
+  animation: fadeSlideUp 0.5s ease 0.2s both;
+}
+
+.tree-stage-sub {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-on-primary-fixed-variant);
+  margin-top: 4px;
+  animation: fadeSlideUp 0.5s ease 0.3s both;
+}
+
+.tree-progress-container {
+  width: 100%;
+  max-width: 240px;
+  margin: 24px auto 0;
+  animation: fadeSlideUp 0.5s ease 0.4s both;
+}
+
+.tree-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.625rem; /* 10px */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-on-primary-fixed-variant);
+  margin-bottom: 6px;
+}
+
+.tree-progress-track {
+  height: 8px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.40);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.tree-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00685d 0%, #008376 60%, #85f8c2 100%);
+  border-radius: 9999px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+}
+
+.tree-progress-hint {
+  font-size: 0.75rem;
+  color: var(--color-on-primary-fixed-variant);
+  text-align: center;
+  margin-top: 8px;
+  font-weight: 500;
+  opacity: 0.80;
+}
+
+html.dark .tree-hero-card {
+  /* Default fallback, will add specific maps if needed */
+  background: linear-gradient(150deg, #005048 0%, #2a313d 100%);
+}
+
+html.dark .tree-streak-chip {
+  background: rgba(42, 49, 61, 0.90);
+  color: #ebf1ff;
+}

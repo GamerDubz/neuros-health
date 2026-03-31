@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* Primary — Deep Teal */
+  --color-primary: #00685d;
+  --color-primary-container: #008376;
+  --color-primary-fixed: #8cf5e4;
+  --color-primary-fixed-dim: #6fd8c8;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #f4fffb;
+  --color-on-primary-fixed: #00201c;
+  --color-on-primary-fixed-variant: #005048;
+  --color-inverse-primary: #6fd8c8;
+
+  /* Secondary — Warm Amber/Gold */
+  --color-secondary: #765a05;
+  --color-secondary-container: #ffd87c;
+  --color-secondary-fixed: #ffdf96;
+  --color-secondary-fixed-dim: #e7c268;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #795d08;
+  --color-on-secondary-fixed: #251a00;
+  --color-on-secondary-fixed-variant: #5a4400;
+
+  /* Tertiary — Success Green */
+  --color-tertiary: #006948;
+  --color-tertiary-container: #00855b;
+  --color-tertiary-fixed: #85f8c2;
+  --color-tertiary-fixed-dim: #67dca7;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #f5fff6;
+  --color-on-tertiary-fixed: #002114;
+  --color-on-tertiary-fixed-variant: #005236;
+
+  /* Surfaces — The depth stack */
+  --color-surface: #f9f9ff;
+  --color-surface-dim: #d3daea;
+  --color-surface-bright: #f9f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f0f3ff;
+  --color-surface-container: #e7eefe;
+  --color-surface-container-high: #e2e8f8;
+  --color-surface-container-highest: #dce2f3;
+  --color-surface-tint: #006a60;
+  --color-surface-variant: #dce2f3;
+  --color-inverse-surface: #2a313d;
+  --color-inverse-on-surface: #ebf1ff;
+
+  /* Text */
+  --color-on-surface: #151c27;
+  --color-on-surface-variant: #3d4947;
+  --color-outline: #6d7a77;
+  --color-outline-variant: #bcc9c6;
+
+  /* Semantic */
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+
+  --color-background: #f9f9ff;
+  --color-on-background: #151c27;
+
+  /* Border Radius */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Custom Utilities */
+  --background-image-gradient-primary: linear-gradient(135deg, #00685d 0%, #008376 100%);
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+
+  /* Dark mode mappings based on Part 6 */
+  html.dark body {
+    background-color: #1a1f2e;
+    color: #e8edf8;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--background-image-gradient-primary);
+  }
+
+  /* Typography scale */
+  .display { font-size: 3.5rem; font-weight: 800; }
+  .h1 { font-size: 2.5rem; font-weight: 800; }
+  .h2 { font-size: 1.75rem; font-weight: 700; }
+  .h3 { font-size: 1.375rem; font-weight: 600; }
+  .body-lg { font-size: 1rem; font-weight: 400; }
+  .body-sm { font-size: 0.875rem; font-weight: 400; }
+  .label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+  .micro { font-size: 0.625rem; font-weight: 600; }
+}
