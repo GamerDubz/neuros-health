@@ -2,9 +2,11 @@
 
 import React from 'react';
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { searchMedicines, getConditionsList } from '@/lib/db/nz-health';
+import { debounce } from '@/lib/utils';
 
 export default function AddMedicationWizard() {
   const router = useRouter();
@@ -14,21 +16,45 @@ export default function AddMedicationWizard() {
 
   // Form State
   const [searchQuery, setSearchQuery] = useState("");
+  const [results, setResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [conditions, setConditions] = useState<any[]>([]);
   const [selectedDrug, setSelectedDrug] = useState<any>(null);
   
   const [dose, setDose] = useState("");
   const [doseUnit, setDoseUnit] = useState("mg");
   const [frequency, setFrequency] = useState("Once daily");
   const [timesOfDay, setTimesOfDay] = useState<string[]>([]);
+  const [linkedCondition, setLinkedCondition] = useState("");
   
   const [remindersEnabled, setRemindersEnabled] = useState(false);
 
-  // Mock drug search results
-  const mockResults = [
-    { id: 1, name: "SertralineGen", generic: "Sertraline" },
-    { id: 2, name: "Atorvastatin Calcium", generic: "Atorvastatin" },
-    { id: 3, name: "Amoxicillin Trihydrate", generic: "Amoxicillin" },
-  ].filter(d => d.name.toLowerCase().includes(searchQuery.toLowerCase()) || d.generic.toLowerCase().includes(searchQuery.toLowerCase()));
+  // Load conditions on mount
+  useEffect(() => {
+    getConditionsList().then(setConditions);
+  }, []);
+
+  // Debounced search for medicines
+  useEffect(() => {
+    if (!searchQuery || searchQuery.length < 2) {
+      setResults([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const data = await searchMedicines(searchQuery);
+        setResults(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const handleStep1Next = () => {
     if (selectedDrug) setStep(2);
@@ -61,7 +87,7 @@ export default function AddMedicationWizard() {
             <span className="text-6xl">🌱</span>
          </div>
          <h1 className="text-3xl font-extrabold text-on-surface tracking-tight mb-2 text-center">
-           {selectedDrug.name} added!
+           {selectedDrug.display_name || selectedDrug.name} added!
          </h1>
          <p className="text-on-surface-variant font-medium text-lg text-center">Your tree is growing!</p>
       </div>
@@ -134,27 +160,37 @@ export default function AddMedicationWizard() {
              </div>
 
              {searchQuery && (
-               <div className="space-y-2 mb-6">
-                 {mockResults.map((result) => (
-                   <button 
-                     key={result.id} 
-                     onClick={() => { setSelectedDrug(result); handleStep1Next(); }}
-                     className="w-full bg-surface-container-lowest p-4 rounded-2xl border border-transparent flex items-center justify-between active:bg-surface-container hover:border-primary/20 transition-all text-left group"
-                   >
-                     <div>
-                       <div className="font-semibold text-on-surface group-hover:text-primary transition-colors">{result.name}</div>
-                       <div className="text-sm text-on-surface-variant font-medium mt-0.5">{result.generic}</div>
-                     </div>
-                     <span className="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_forward_ios</span>
-                   </button>
-                 ))}
-                 {mockResults.length === 0 && (
-                   <div className="p-4 text-center text-on-surface-variant text-sm font-medium">
-                     No matches found in standard list.
-                   </div>
-                 )}
-               </div>
-             )}
+                <div className="space-y-2 mb-6">
+                  {isSearching ? (
+                    <div className="p-8 flex justify-center">
+                      <span className="material-symbols-outlined animate-spin text-primary">progress_activity</span>
+                    </div>
+                  ) : (
+                    <>
+                      {results.map((result) => (
+                        <button 
+                          key={result.id || result.slug} 
+                          onClick={() => { setSelectedDrug(result); handleStep1Next(); }}
+                          className="w-full bg-surface-container-lowest p-4 rounded-2xl border border-transparent flex items-center justify-between active:bg-surface-container hover:border-primary/20 transition-all text-left group"
+                        >
+                          <div>
+                            <div className="font-semibold text-on-surface group-hover:text-primary transition-colors">{result.display_name}</div>
+                            <div className="text-sm text-on-surface-variant font-medium mt-0.5">
+                              {result.generic_name} {result.brand_names?.length > 0 && `• ${result.brand_names.join(', ')}`}
+                            </div>
+                          </div>
+                          <span className="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_forward_ios</span>
+                        </button>
+                      ))}
+                      {results.length === 0 && searchQuery.length >= 2 && (
+                        <div className="p-4 text-center text-on-surface-variant text-sm font-medium">
+                          No matches found in NZ database.
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
 
              <div className="mt-4">
                 <p className="text-sm text-on-surface-variant">
@@ -170,7 +206,7 @@ export default function AddMedicationWizard() {
              <div className="flex items-center gap-2 mb-6">
                 <div className="bg-primary-fixed text-on-primary-fixed px-5 py-2.5 rounded-full font-bold text-sm flex items-center gap-2 shadow-sm w-fit">
                    <span className="material-symbols-outlined text-[18px]">check</span>
-                   {selectedDrug?.name}
+                   {selectedDrug?.display_name || selectedDrug?.name}
                 </div>
                 <button onClick={() => setStep(1)} className="text-xs text-on-surface-variant hover:text-primary font-bold ml-2">Change</button>
              </div>
@@ -237,11 +273,16 @@ export default function AddMedicationWizard() {
 
              <div className="space-y-2">
                 <label className="text-sm font-semibold text-on-surface block mt-2">Link Condition (Optional)</label>
-                <select className="w-full h-14 bg-surface-container-high rounded-2xl px-4 text-on-surface font-medium focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all appearance-none cursor-pointer">
-                  <option value="">None</option>
-                  <option value="migraine">Migraine</option>
-                  <option value="hypertension">Hypertension</option>
-                </select>
+                 <select 
+                   value={linkedCondition}
+                   onChange={(e) => setLinkedCondition(e.target.value)}
+                   className="w-full h-14 bg-surface-container-high rounded-2xl px-4 text-on-surface font-medium focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all appearance-none cursor-pointer"
+                 >
+                   <option value="">None</option>
+                   {conditions.map(c => (
+                     <option key={c.id} value={c.slug}>{c.condition_name}</option>
+                   ))}
+                 </select>
              </div>
 
              <div className="pt-6">
@@ -301,7 +342,7 @@ export default function AddMedicationWizard() {
                           <span className="material-symbols-outlined text-[16px]">notifications</span>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-gray-900 leading-tight">Time for your {selectedDrug?.name}</p>
+                          <p className="text-sm font-bold text-gray-900 leading-tight">Time for your {selectedDrug?.display_name || selectedDrug?.name}</p>
                           <p className="text-xs text-gray-600 mt-0.5">Dose: {dose}{doseUnit} • {timesOfDay[0] || ""} Reminder</p>
                         </div>
                      </div>

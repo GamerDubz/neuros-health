@@ -1,73 +1,57 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getConditionsList, getConditionBySlug, searchConditions } from '@/lib/db/nz-health';
 
 export default function CommonAilmentsLibrary() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedAilment, setSelectedAilment] = useState<any>(null);
+  const [ailments, setAilments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const categories = ["All", "Respiratory", "Digestive", "Pain", "Skin", "Fever", "Allergy", "Mental Health", "Eye & Ear"];
+  // Load all conditions
+  useEffect(() => {
+    const loadConditions = async () => {
+      setLoading(true);
+      const data = await getConditionsList(500);
+      setAilments(data.map((c: any) => ({
+        ...c,
+        id: c.slug,
+        name: c.condition_name,
+        shortDesc: c.meta_description || "Information from Healthify NZ.",
+        color: "primary" // Default color
+      })));
+      setLoading(false);
+    };
+    loadConditions();
+  }, []);
 
-  const ailments = [
-    {
-      id: "flu",
-      name: "Influenza (The Flu)",
-      category: "Respiratory",
-      shortDesc: "Viral infection of the respiratory system.",
-      symptoms: ["Fever or chills", "Cough and sore throat", "Runny or stuffy nose", "Muscle or body aches", "Headaches and fatigue"],
-      selfCare: [
-        "Rest extensively in a quiet room.",
-        "Drink plenty of clear fluids to prevent dehydration.",
-        "Use a humidifier to help ease breathing.",
-      ],
-      otc: ["Paracetamol 500mg", "Ibuprofen 400mg", "Oral decongestants"],
-      pharmacist: ["Symptoms persist beyond 7 days.", "Fever doesn't reduce with medication.", "You have a chronic medical condition."],
-      emergency: ["Difficulty breathing or shortness of breath.", "Pain or heavy pressure in chest.", "Sudden dizziness or confusion."],
-      color: "primary"
-    },
-    {
-      id: "migraine",
-      name: "Migraine",
-      category: "Pain",
-      shortDesc: "Severe, throbbing recurring headache.",
-      symptoms: ["Throbbing pain normally on one side", "Sensitivity to light and sound", "Nausea or vomiting", "Visual aura (flashing lights)"],
-      selfCare: [
-        "Rest in a quiet, dark room.",
-        "Apply a cold pack to the forehead or back of the neck.",
-        "Maintain regular sleep patterns and hydration to avoid triggers.",
-      ],
-      otc: ["Ibuprofen 400mg", "Aspirin 300mg", "Specific OTC migraine formulations"],
-      pharmacist: ["Migraines are becoming more frequent.", "OTC painkillers are no longer effective.", "You are needing painkillers more than 2 days a week."],
-      emergency: ["A sudden 'thunderclap' headache.", "Headache with fever, stiff neck, or rash.", "Neurological symptoms like weakness or numbness."],
-      color: "tertiary"
-    },
-    {
-      id: "reflux",
-      name: "Acid Reflux (GERD)",
-      category: "Digestive",
-      shortDesc: "Stomach acid flowing back into the esophagus.",
-      symptoms: ["Heartburn (burning sensation in chest)", "Regurgitation of food or sour liquid", "Difficulty swallowing", "Sensation of a lump in your throat"],
-      selfCare: [
-        "Eat smaller, more frequent meals.",
-        "Avoid trigger foods like spicy, fatty, or highly acidic foods.",
-        "Elevate the head of your bed if symptoms occur at night.",
-        "Avoid lying down immediately after eating."
-      ],
-      otc: ["Antacids (e.g., calcium carbonate)", "H2 blockers (e.g., famotidine)", "Proton pump inhibitors (e.g., omeprazole)"],
-      pharmacist: ["Heartburn occurs more than twice a week.", "Symptoms persist despite OTC medications.", "Difficulty swallowing."],
-      emergency: ["Severe chest pain or pressure (often mistaken for heartburn).", "Vomiting blood or material that looks like coffee grounds.", "Black, tarry stools."],
-      color: "secondary"
+  // Update selected ailment with full details when clicked
+  const handleSelectAilment = async (ailment: any) => {
+    setSelectedAilment(ailment); // Show partial immediately
+    try {
+      const fullData = await getConditionBySlug(ailment.slug);
+      if (fullData) {
+        setSelectedAilment({
+          ...ailment,
+          ...fullData,
+          name: fullData.condition_name,
+          shortDesc: fullData.meta_description,
+        });
+      }
+    } catch (err) {
+      console.error(err);
     }
-  ];
+  };
 
   const filteredAilments = ailments.filter(a => {
-    const matchesQuery = a.name.toLowerCase().includes(query.toLowerCase()) || a.shortDesc.toLowerCase().includes(query.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || a.category === selectedCategory;
-    return matchesQuery && matchesCategory;
+    const matchesQuery = a.name.toLowerCase().includes(query.toLowerCase()) || 
+                         a.shortDesc?.toLowerCase().includes(query.toLowerCase());
+    return matchesQuery;
   });
 
   if (selectedAilment) {
@@ -102,73 +86,76 @@ export default function CommonAilmentsLibrary() {
           {/* Sections */}
           <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
             <h3 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">symptoms</span> Symptoms
+              <span className="material-symbols-outlined text-primary text-[20px]">info</span> Overview
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {selectedAilment.symptoms.map((s: string, idx: number) => (
-                <span key={idx} className="bg-surface-container-high px-4 py-2 rounded-full text-sm font-semibold text-on-surface">{s}</span>
-              ))}
-            </div>
+            <p className="text-on-surface-variant text-sm md:text-base leading-relaxed whitespace-pre-line">
+              {selectedAilment.overview || "Loading overview..."}
+            </p>
           </div>
 
-          <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-tertiary text-[20px]">spa</span> Self-Care Steps
-            </h3>
-            <div className="space-y-3">
-              {selectedAilment.selfCare.map((step: string, idx: number) => (
-                <div key={idx} className="flex gap-4 p-4 bg-surface-container-low rounded-2xl">
-                  <div className="bg-tertiary text-white rounded-full w-8 h-8 flex-shrink-0 flex items-center justify-center font-bold text-sm">
-                    {idx + 1}
+          {selectedAilment.symptoms && (
+            <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
+              <h3 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-[20px]">symptoms</span> Symptoms
+              </h3>
+              <div className="text-sm font-medium text-on-surface leading-loose whitespace-pre-line bg-surface-container-low/30 p-4 rounded-2xl">
+                {selectedAilment.symptoms}
+              </div>
+            </div>
+          )}
+
+          {selectedAilment.self_care && (
+            <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
+              <h3 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-tertiary text-[20px]">spa</span> Self-Care Steps
+              </h3>
+              <div className="text-sm font-medium text-on-surface leading-relaxed whitespace-pre-line px-2">
+                {selectedAilment.self_care}
+              </div>
+            </div>
+          )}
+
+          {selectedAilment.medicines_treatment && (
+            <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
+              <h3 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-secondary text-[20px]">medication</span> Treatment & Medicines
+              </h3>
+              <div className="text-sm font-medium text-secondary-900 leading-relaxed whitespace-pre-line px-2">
+                {selectedAilment.medicines_treatment}
+              </div>
+            </div>
+          )}
+
+          {(selectedAilment.when_to_see_doctor || selectedAilment.emergency) && (
+            <div className="bg-error-container p-6 rounded-3xl border border-error/20">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-error mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-error text-[20px]">emergency</span> When to Seek Help
+              </h3>
+              <div className="space-y-4">
+                {selectedAilment.when_to_see_doctor && (
+                  <div className="bg-white/40 p-4 rounded-xl">
+                    <h4 className="text-xs font-black text-error/70 uppercase mb-2">See your Doctor if:</h4>
+                    <p className="text-sm text-on-error-container font-medium leading-relaxed whitespace-pre-line">{selectedAilment.when_to_see_doctor}</p>
                   </div>
-                  <p className="text-on-surface text-sm font-medium leading-relaxed pt-1">{step}</p>
-                </div>
-              ))}
+                )}
+                {selectedAilment.emergency && (
+                  <div className="bg-error shadow-sm p-4 rounded-xl text-white">
+                    <h4 className="text-xs font-black uppercase mb-2">Call 111 immediately if:</h4>
+                    <p className="text-sm font-bold leading-relaxed whitespace-pre-line">{selectedAilment.emergency}</p>
+                  </div>
+                )}
+              </div>
+              <a href="tel:111" className="w-full mt-6 flex items-center justify-center gap-2 bg-error text-white h-14 rounded-full font-bold text-lg active:scale-95 transition-transform shadow-lg shadow-error/20">
+                Call 111
+              </a>
             </div>
-          </div>
-
-          <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-secondary text-[20px]">medication</span> OTC Suggestions
-            </h3>
-            <div className="flex flex-wrap gap-3">
-              {selectedAilment.otc.map((drug: string, idx: number) => (
-                <span key={idx} className="bg-secondary-fixed text-on-secondary-fixed rounded-full px-5 py-2.5 text-sm font-bold shadow-sm inline-flex flex-col">
-                  {drug}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-secondary-container p-6 rounded-3xl">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-on-secondary-container mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-secondary text-[20px]">warning</span> When to See Your Pharmacist
-            </h3>
-            <ul className="space-y-3">
-              {selectedAilment.pharmacist.map((warning: string, idx: number) => (
-                <li key={idx} className="flex gap-3 items-start">
-                  <span className="material-symbols-outlined text-secondary text-[20px] mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
-                  <span className="text-sm text-on-secondary-container font-medium leading-relaxed">{warning}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-error-container p-6 rounded-3xl border border-error/20">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-error mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-error text-[20px]">emergency</span> When to Call 111
-            </h3>
-            <ul className="space-y-3 mb-6">
-              {selectedAilment.emergency.map((warning: string, idx: number) => (
-                <li key={idx} className="flex gap-3 items-start">
-                  <span className="material-symbols-outlined text-error text-[20px] mt-0.5">radio_button_unchecked</span>
-                  <span className="text-sm text-on-error-container font-medium leading-relaxed">{warning}</span>
-                </li>
-              ))}
-            </ul>
-            <a href="tel:111" className="w-full flex items-center justify-center gap-2 bg-error text-white h-14 rounded-full font-bold text-lg active:scale-95 transition-transform">
-              Call 111
-            </a>
+          )}
+          
+          <div className="flex flex-col items-center gap-4 py-8 px-4 opacity-70">
+            <p className="text-xs text-outline italic text-center">
+              Source: Healthify He Puna Waiora NZ. NZ-reviewed health information.
+            </p>
+            <img src="https://healthify.nz/themes/health-navigator/images/logo.png" alt="Healthify NZ" className="h-8 grayscale" />
           </div>
         </div>
       </div>
@@ -179,7 +166,7 @@ export default function CommonAilmentsLibrary() {
     <div className="animate-fade-in relative max-w-2xl mx-auto lg:max-w-5xl">
       <div className="grid lg:grid-cols-[240px_1fr] gap-8 items-start">
         
-        {/* Desktop Sidebar (Categories) */}
+        {/* Desktop Sidebar (Search) */}
         <div className="hidden lg:block sticky top-24">
           <div className="relative mb-6">
             <span className="material-symbols-outlined absolute left-4 top-4 text-outline">search</span>
@@ -191,17 +178,11 @@ export default function CommonAilmentsLibrary() {
               className="w-full h-14 bg-surface-container-high rounded-full pl-12 pr-4 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all"
             />
           </div>
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-outline mb-4 pl-4">Categories</h2>
-            {categories.map(cat => (
-              <button 
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`w-full text-left px-4 py-3 rounded-2xl font-semibold text-sm transition-colors ${selectedCategory === cat ? 'bg-surface-container-low text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'}`}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="p-6 bg-primary-container/30 rounded-3xl">
+            <h3 className="text-xs font-black uppercase tracking-tighter text-primary mb-2">NZ Health Library</h3>
+            <p className="text-xs text-on-primary-container/70 leading-relaxed font-medium">
+              Browse over 400 conditions reviewed by New Zealand clinical experts.
+            </p>
           </div>
         </div>
 
@@ -211,18 +192,7 @@ export default function CommonAilmentsLibrary() {
             <p className="text-on-surface-variant text-base">General guidance for everyday health concerns.</p>
           </div>
 
-          {/* Mobile Categories Row */}
-          <div className="flex overflow-x-auto gap-3 pb-4 -mx-6 px-6 lg:hidden no-scrollbar">
-            {categories.map(cat => (
-              <button 
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap active:scale-95 transition-transform ${selectedCategory === cat ? 'bg-primary text-white' : 'bg-surface-container-low text-on-surface-variant'}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+          {/* Categories removed for now */}
 
           {/* Mobile Search */}
           <div className="relative h-14 w-full mb-6 lg:hidden">
@@ -237,19 +207,26 @@ export default function CommonAilmentsLibrary() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredAilments.map(ailment => (
-              <button 
-                key={ailment.id}
-                onClick={() => setSelectedAilment(ailment)}
-                className="bg-surface-container-lowest p-5 rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)] active:bg-surface-container-low text-left active:scale-95 transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              >
-                <div className={`w-12 h-12 rounded-full mb-4 flex items-center justify-center bg-${ailment.color}-fixed/30 text-${ailment.color}`}>
-                   <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>health_and_safety</span>
-                </div>
-                <h3 className="font-bold text-on-surface text-base lg:text-lg leading-tight group-hover:text-primary transition-colors">{ailment.name}</h3>
-                <p className="text-xs text-on-surface-variant mt-2 font-medium leading-relaxed">{ailment.shortDesc}</p>
-              </button>
-            ))}
+            {loading ? (
+              <div className="col-span-full py-20 flex flex-col items-center justify-center gap-4">
+                <span className="material-symbols-outlined animate-spin text-primary text-4xl">progress_activity</span>
+                <p className="text-on-surface-variant font-bold">Accessing NZ Health Database...</p>
+              </div>
+            ) : (
+              filteredAilments.map(ailment => (
+                <button 
+                  key={ailment.id}
+                  onClick={() => handleSelectAilment(ailment)}
+                  className="bg-surface-container-lowest p-5 rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)] active:bg-surface-container-low text-left active:scale-95 transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary group"
+                >
+                  <div className={`w-12 h-12 rounded-full mb-4 flex items-center justify-center bg-primary-fixed/30 text-primary`}>
+                     <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>health_and_safety</span>
+                  </div>
+                  <h3 className="font-bold text-on-surface text-base lg:text-lg leading-tight group-hover:text-primary transition-colors">{ailment.name}</h3>
+                  <p className="text-xs text-on-surface-variant mt-2 font-medium leading-relaxed line-clamp-2">{ailment.shortDesc}</p>
+                </button>
+              ))
+            )}
           </div>
 
           {filteredAilments.length === 0 && (

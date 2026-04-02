@@ -5,12 +5,25 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 
-export function MedicationDetailClient({ initialId }: { initialId: string }) {
+export function MedicationDetailClient({ 
+  initialId, 
+  nzData 
+}: { 
+  initialId: string, 
+  nzData?: any 
+}) {
   const router = useRouter();
   const { medications } = useStore();
   const [activeTab, setActiveTab] = useState("About");
 
-  const med = medications.find(m => m.id === initialId) || medications[0];
+  // Fallback to store if no NZ data
+  const medFromStore = medications.find(m => m.id === initialId) || medications[0];
+  
+  // Use NZ Data if available, else fallback to store/US data
+  const medName = nzData?.display_name || medFromStore.name;
+  const medDose = nzData?.forms_available || medFromStore.dose;
+  const category = nzData?.category || "Medication";
+  
   const tabs = ["About", "How to Take", "Side Effects", "Self-Care", "Storage"];
 
   return (
@@ -22,7 +35,7 @@ export function MedicationDetailClient({ initialId }: { initialId: string }) {
             <button onClick={() => router.push("/medications")} className="p-2 -ml-2 rounded-full text-primary active:scale-95 transition-transform">
               <span className="material-symbols-outlined text-[24px]">arrow_back</span>
             </button>
-            <h1 className="font-bold text-lg text-teal-800 tracking-tight flex-1 ml-2">{med.name}</h1>
+            <h1 className="font-bold text-lg text-teal-800 tracking-tight flex-1 ml-2">{medName}</h1>
             <button className="p-2 -mr-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors">
               <span className="material-symbols-outlined">more_vert</span>
             </button>
@@ -59,13 +72,16 @@ export function MedicationDetailClient({ initialId }: { initialId: string }) {
             <div className="bg-white/80 w-16 h-16 rounded-full flex items-center justify-center shrink-0 text-secondary backdrop-blur-sm">
                <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>medication</span>
             </div>
-            <div>
-               <h2 className="font-extrabold text-2xl md:text-3xl text-on-secondary-container tracking-tight">{med.name}</h2>
-               <div className="flex flex-wrap items-center gap-3 mt-2">
-                 <span className="text-sm font-bold text-on-secondary-container/80 uppercase tracking-wide">{med.dose}</span>
-                 <span className="bg-white/60 px-3 py-1 rounded-full text-xs font-bold text-on-secondary-container shadow-sm">Anxiety</span>
-               </div>
-            </div>
+             <div>
+                <h2 className="font-extrabold text-2xl md:text-3xl text-on-secondary-container tracking-tight">{medName}</h2>
+                <div className="flex flex-wrap items-center gap-3 mt-2">
+                  <span className="text-sm font-bold text-on-secondary-container/80 uppercase tracking-wide">{medDose}</span>
+                  <span className="bg-white/60 px-3 py-1 rounded-full text-xs font-bold text-on-secondary-container shadow-sm">{category}</span>
+                  {nzData?.funded_subsidised && (
+                    <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">NZ Funded</span>
+                  )}
+                </div>
+             </div>
          </div>
 
          <div className="grid md:grid-cols-[240px_1fr] gap-8 mt-8">
@@ -83,11 +99,18 @@ export function MedicationDetailClient({ initialId }: { initialId: string }) {
                    {tab}
                  </button>
                ))}
-               <div className="pt-8 px-2">
-                 <button className="w-full bg-primary/10 text-primary font-bold px-4 py-3 rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors">
-                   <span className="material-symbols-outlined text-[18px]">download</span> Leaflet PDF
-                 </button>
-               </div>
+                {nzData?.cmi_pdf_url && (
+                  <div className="pt-8 px-2">
+                    <a 
+                      href={nzData.cmi_pdf_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-full bg-primary/10 text-primary font-bold px-4 py-3 rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">download</span> Consumer Info (PDF)
+                    </a>
+                  </div>
+                )}
             </div>
 
             {/* Content Area */}
@@ -95,56 +118,91 @@ export function MedicationDetailClient({ initialId }: { initialId: string }) {
                {activeTab === "About" && (
                  <div className="space-y-6">
                     <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
-                       <h3 className="font-bold text-lg text-on-surface mb-3">What is {med.name}?</h3>
+                       <h3 className="font-bold text-lg text-on-surface mb-3">What is {medName}?</h3>
                        <p className="text-on-surface-variant font-medium text-sm md:text-base leading-relaxed">
-                         {med.description || "Consult your healthcare provider for more information."}
+                         {nzData?.what_it_is || medFromStore.description || "Consult your healthcare provider for more information."}
                        </p>
                     </div>
-                    <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
-                       <h3 className="font-bold text-lg text-on-surface mb-3">How does it work?</h3>
-                       <p className="text-on-surface-variant font-medium text-sm md:text-base leading-relaxed">
-                         Take as directed by your physician. This medication works to manage your health symptoms effectively over time.
-                       </p>
+                    {nzData?.how_it_works && (
+                      <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
+                         <h3 className="font-bold text-lg text-on-surface mb-3">How does it work?</h3>
+                         <p className="text-on-surface-variant font-medium text-sm md:text-base leading-relaxed">
+                           {nzData.how_it_works}
+                         </p>
+                      </div>
+                    )}
+                    <div className="flex flex-col items-center md:items-start gap-4 mt-8 px-4">
+                      <p className="text-xs text-outline italic text-center md:text-left">
+                        Information sourced from {nzData?.source_healthify ? "Healthify NZ" : nzData?.source_medsafe ? "Medsafe NZ" : "General Medical Data"}.
+                      </p>
+                      <div className="flex gap-4">
+                        {nzData?.source_healthify && (
+                          <img src="https://healthify.nz/themes/health-navigator/images/logo.png" alt="Healthify NZ" className="h-6 opacity-60 grayscale hover:grayscale-0 transition-all" />
+                        )}
+                        {nzData?.source_medsafe && (
+                          <div className="text-[10px] font-black text-outline/40 uppercase tracking-tighter border border-outline/20 px-2 py-0.5 rounded">Medsafe NZ</div>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-xs text-outline px-4 italic text-center md:text-left">Based on general medical data. Always follow your prescriber's exact instructions.</p>
                  </div>
                )}
 
                {activeTab === "Side Effects" && (
                  <div className="space-y-6">
+                    {/* RED CARD: Serious Side Effects */}
+                    {nzData?.serious_side_effects && (
+                      <div className="bg-error-container p-6 rounded-3xl border-2 border-error/20 shadow-lg">
+                        <div className="flex items-center gap-3 text-on-error-container mb-4">
+                          <span className="material-symbols-outlined text-error text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>report</span>
+                          <h3 className="text-lg font-black uppercase tracking-tight">Serious Side Effects: Seek Help</h3>
+                        </div>
+                        <div className="text-sm font-bold text-on-error-container leading-relaxed whitespace-pre-line bg-white/40 p-4 rounded-xl">
+                          {nzData.serious_side_effects}
+                        </div>
+                        <p className="text-xs font-bold text-error/70 mt-4 uppercase tracking-widest text-center">Stop taking and call 111 if severe.</p>
+                      </div>
+                    )}
+
                     <div className="bg-surface-container-low p-6 rounded-3xl">
                        <h3 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
-                         <span className="material-symbols-outlined text-outline">sick</span> Common
+                         <span className="material-symbols-outlined text-outline">sick</span> Common Side Effects:
                        </h3>
-                       <div className="flex flex-wrap gap-2">
-                         {(med.sideEffects || ["Nausea", "Headaches", "Insomnia"]).map(s => (
-                           <span key={s} className="bg-surface-container px-4 py-2 rounded-full text-sm font-semibold text-on-surface">{s}</span>
-                         ))}
+                       <div className="text-sm font-medium text-on-surface leading-loose whitespace-pre-line">
+                         {nzData?.common_side_effects || nzData?.side_effects_combined || (medFromStore.sideEffects || ["Nausea", "Headaches", "Insomnia"]).join(", ")}
                        </div>
                     </div>
 
-                    <div className="bg-secondary-fixed/40 p-6 rounded-3xl">
-                       <h3 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4 flex items-center gap-2">
-                         <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span> Monitor:
-                       </h3>
-                       <ul className="space-y-3">
-                         {(med.warnings || ["Wait for reaction before driving.", "Do not stop suddenly."]).map(s => (
-                           <li key={s} className="flex gap-3">
-                              <span className="material-symbols-outlined text-secondary mt-0.5 text-[20px]">radio_button_unchecked</span>
-                              <span className="text-sm font-medium text-on-surface leading-relaxed">{s}</span>
-                           </li>
-                         ))}
-                       </ul>
-                    </div>
+                    {nzData?.precautions && (
+                      <div className="bg-secondary-fixed/40 p-6 rounded-3xl">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4 flex items-center gap-2">
+                          <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>info</span> Precautions:
+                        </h3>
+                        <div className="text-sm font-medium text-secondary-900 leading-relaxed">
+                          {nzData.precautions}
+                        </div>
+                      </div>
+                    )}
                  </div>
                )}
 
                {activeTab === "How to Take" && (
-                 <div className="space-y-3">
-                    <div className="flex gap-4 p-5 bg-surface-container-lowest rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
-                       <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center font-bold shrink-0 mt-0.5 shadow-sm">1</div>
-                       <p className="text-on-surface font-medium text-sm md:text-base leading-relaxed pt-1">Take your dose with or without food as instructed.</p>
+                 <div className="space-y-6">
+                    <div className="flex gap-4 p-6 bg-surface-container-lowest rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
+                       <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center font-bold shrink-0 shadow-sm">
+                         <span className="material-symbols-outlined">instruction</span>
+                       </div>
+                       <div className="text-on-surface font-medium text-sm md:text-base leading-relaxed whitespace-pre-line">
+                         {nzData?.dosage_how_to_take || "Take as directed by your physician or pharmacist."}
+                       </div>
                     </div>
+                    {nzData?.missed_dose && (
+                      <div className="bg-tertiary-fixed/20 p-6 rounded-3xl">
+                        <h4 className="font-bold text-tertiary uppercase text-xs tracking-widest mb-2 px-2">If you miss a dose:</h4>
+                        <p className="text-sm font-semibold text-on-tertiary-container leading-relaxed px-2">
+                          {nzData.missed_dose}
+                        </p>
+                      </div>
+                    )}
                  </div>
                )}
 
@@ -158,7 +216,7 @@ export function MedicationDetailClient({ initialId }: { initialId: string }) {
                          <div>
                             <h4 className="font-bold text-on-surface">Tips</h4>
                             <p className="text-sm text-on-surface-variant font-medium mt-1 leading-relaxed">
-                              {(med.selfCare || ["Stay hydrated.", "Check in with your doctor weekly."]).join(" ")}
+                              {(medFromStore.selfCare || ["Stay hydrated.", "Check in with your doctor weekly."]).join(" ")}
                             </p>
                          </div>
                        </div>
@@ -167,13 +225,23 @@ export function MedicationDetailClient({ initialId }: { initialId: string }) {
                )}
 
                {activeTab === "Storage" && (
-                 <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm space-y-2">
+                 <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm space-y-4">
                     <div className="flex items-center gap-4 py-3">
                        <div className="w-12 h-12 bg-surface-container flex items-center justify-center rounded-2xl text-on-surface-variant shrink-0">
                          <span className="material-symbols-outlined">thermostat</span>
                        </div>
-                       <p className="text-sm font-medium text-on-surface">Store at room temperature.</p>
+                       <p className="text-sm font-medium text-on-surface">
+                         {nzData?.storage || "Store at room temperature, away from moisture and heat."}
+                       </p>
                     </div>
+                    {nzData?.overdose && (
+                      <div className="bg-error-container/40 p-4 rounded-2xl border border-error/10">
+                        <p className="text-xs font-black text-error uppercase tracking-widest mb-1 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">emergency</span> Overdose
+                        </p>
+                        <p className="text-xs text-on-error-container font-bold leading-relaxed">{nzData.overdose}</p>
+                      </div>
+                    )}
                  </div>
                )}
 

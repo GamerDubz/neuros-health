@@ -3,45 +3,69 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { searchConditions } from '@/lib/db/nz-health';
 
 export default function AIResponseScreen() {
   const router = useRouter();
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    // Read from session storage to mock the context
-    const storedSymptoms = sessionStorage.getItem("hc_symptoms") || "Headache and nausea";
-    const storedDuration = sessionStorage.getItem("hc_duration") || "2-3 days";
-    const storedSeverity = sessionStorage.getItem("hc_severity") || "Mild";
+    const loadGuidance = async () => {
+      const storedSymptoms = sessionStorage.getItem("hc_symptoms") || "";
+      const storedDuration = sessionStorage.getItem("hc_duration") || "Today";
+      const storedSeverity = sessionStorage.getItem("hc_severity") || "Mild";
 
-    // MOCK RESPONSE ALGORITHM
-    // If the word "chest", "arm", "breathe", or "severe" is included, elevate to CALL_111
-    const s = storedSymptoms.toLowerCase();
-    let triage = "SELF_CARE";
-    
-    if (s.includes("chest") || s.includes("breathe") || storedSeverity === "Severe" && s.includes("pain")) {
-      triage = "CALL_111_IMMEDIATELY";
-    } else if (storedDuration === "2 weeks+" || storedSeverity === "Severe") {
-      triage = "SEE_PHARMACIST";
-    } else if (s.includes("dizzy") || s.includes("vomit")) {
-      triage = "CALL_HEALTHLINE";
-    }
+      if (!storedSymptoms) {
+        router.push("/health/check");
+        return;
+      }
 
-    // Delay to simulate render
-    setTimeout(() => {
+      // 1. Search database for matches
+      const matches = await searchConditions(storedSymptoms);
+      const topMatch = matches[0];
+
+      // 2. Safety Heuristics
+      const s = storedSymptoms.toLowerCase();
+      let triage = "SELF_CARE";
+      
+      const redFlags = ["chest", "breath", "crushing", "severe pain", "unconscious", "stroke", "bleeding"];
+      const hasRedFlag = redFlags.some(flag => s.includes(flag)) || storedSeverity === "Severe";
+
+      if (hasRedFlag) {
+        triage = "CALL_111_IMMEDIATELY";
+      } else if (storedDuration === "1 week+" || storedDuration === "2 weeks+") {
+        triage = "SEE_PHARMACIST";
+      } else if (s.includes("dizzy") || s.includes("vomit") || s.includes("fever")) {
+        triage = "CALL_HEALTHLINE";
+      }
+
+      // 3. Mapping data
       setData({
         symptomsText: `${storedSymptoms}, ${storedSeverity.toLowerCase()} severity for ${storedDuration.toLowerCase()}.`,
         triage,
-        whatItMayBe: triage === "CALL_111_IMMEDIATELY" 
-          ? "The symptoms you have described could indicate a serious or life-threatening medical emergency." 
-          : "Based on the symptoms described, this may be a standard viral presentation or mild strain. This is not a diagnosis.",
-        actions: triage === "CALL_111_IMMEDIATELY"
-          ? ["Call 111 immediately for an ambulance.", "Unlock your front door if possible.", "Sit or lie down in a safe, comfortable place."]
-          : ["Rest and stay hydrated.", "Monitor your temperature.", "You can use over-the-counter paracetamol for discomfort."],
-        watchOut: ["Symptoms suddenly worsen.", "You develop a high fever.", "You experience difficulty breathing."]
+        topMatch: topMatch ? {
+          name: topMatch.condition_name,
+          overview: topMatch.overview,
+          emergency: topMatch.emergency
+        } : null,
+        whatItMayBe: topMatch 
+          ? `Based on your symptoms, this matches information on ${topMatch.condition_name}.`
+          : triage === "CALL_111_IMMEDIATELY" 
+            ? "The symptoms you have described could indicate a serious or life-threatening medical emergency." 
+            : "We couldn't find a direct match in our database, but here is general advice for your triage level.",
+        actions: topMatch?.self_care 
+          ? [topMatch.self_care.split('.')[0] + '.'] 
+          : triage === "CALL_111_IMMEDIATELY"
+            ? ["Call 111 immediately for an ambulance.", "Unlock your front door if possible."]
+            : ["Rest and stay hydrated.", "Monitor your temperature."],
+        watchOut: topMatch?.emergency 
+          ? [topMatch.emergency.split('.')[0] + '.']
+          : ["Symptoms suddenly worsen.", "Difficulty breathing."]
       });
-    }, 100);
-  }, []);
+    };
+
+    loadGuidance();
+  }, [router]);
 
   if (!data) return <div className="min-h-screen bg-surface flex items-center justify-center p-6"><span className="material-symbols-outlined animate-spin text-primary text-4xl">progress_activity</span></div>;
 
