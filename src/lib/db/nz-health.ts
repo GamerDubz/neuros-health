@@ -204,3 +204,13 @@ export async function getWellbeingByKeyword(keyword: string, limit = 10) {
     .limit(limit)
   return data || []
 }
+
+/**
+ * Get all medicine slugs for pre-rendering
+ */
+export async function getAllMedicineSlugs() {
+  const { data } = await supabase
+    .from('medicines')
+    .select('slug')
+  return data || []
+}
