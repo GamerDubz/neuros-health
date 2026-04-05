@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/thema/AppData/Roaming/Code/User/**)",
+      "Read(//c/Users/thema/.claude/**)",
+      "Read(//c/Users/thema/AppData/Roaming/Claude/**)",
+      "Read(//c/Users/thema/**)",
+      "Bash(xargs grep:*)",
+      "Bash(claude mcp:*)",
+      "Bash(where claude:*)"
+    ]
+  }
+}
