@@ -1,133 +1,129 @@
 "use client";
 
 import { useStore } from "@/lib/store";
-import { TreeHeroCard } from "@/components/HealthTree/TreeHeroCard";
-import { TreeGallery } from "@/components/HealthTree/TreeGallery";
+import { Calendar as CalendarIcon, CheckCircle2, XCircle } from "lucide-react";
+import { useState } from "react";
 
 export default function TrackerPage() {
-  const { logs, medications, user } = useStore();
-  
-  // Date logic
-  const today = new Date();
-  const dateKey = today.toISOString().split('T')[0];
-  const todayLogs = logs.filter(l => l.dateStr === dateKey);
-  const takenMeds = todayLogs.map(l => l.medicationId);
+    const { logs, medications } = useStore();
 
-  const totalMeds = medications.length > 0 ? medications.length : 4; 
-  const takenCount = takenMeds.length;
-  const progressPercent = Math.min(100, Math.round((takenCount / totalMeds) * 100));
+    // Create a mock 7-day history for visualization
+    const today = new Date();
+    const past7Days = Array.from({ length: 7 }).map((_, i) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() - (6 - i));
+        return d.toISOString().split('T')[0];
+    });
 
-  // Determine stage from streak
-  let treeStage = 1;
-  const streak = user.streakDays || 0;
-  if (streak >= 90) treeStage = 7;
-  else if (streak >= 60) treeStage = 6;
-  else if (streak >= 30) treeStage = 5;
-  else if (streak >= 14) treeStage = 4;
-  else if (streak >= 7) treeStage = 3;
-  else if (streak >= 3) treeStage = 2;
+    const adherenceData = past7Days.map(dateStr => {
+        const logsForDate = logs.filter((l: any) => l.dateStr === dateStr);
+        const expected = medications.length;
+        const isToday = dateStr === today.toISOString().split('T')[0];
 
-  // Generate 7 days mock adherence array
-  const past7Days = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date();
-    d.setDate(today.getDate() - (6 - i));
-    const isToday = i === 6;
-    
-    // For mock visualization, random past days if not today
-    const p = isToday ? progressPercent : (Math.random() > 0.3 ? 100 : 50);
-    
-    return {
-      dayName: d.toLocaleDateString('en-US', { weekday: 'short' }),
-      percent: p,
-      isToday
-    };
-  });
+        // For mock purposes, dates before today might have random or full adherence
+        const percent = expected === 0 ? 0 : Math.round((logsForDate.length / expected) * 100);
 
-  return (
-    <div className="space-y-8 animate-fade-in relative max-w-5xl mx-auto">
-      
-      <div className="pt-2">
-        <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">Your Progress.</h1>
-        <p className="text-on-surface-variant text-sm mt-1">Watch your commitment take root.</p>
-      </div>
+        return {
+            dateStr,
+            dayName: new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short' }),
+            percent,
+            isToday
+        };
+    });
 
-      <div className="grid lg:grid-cols-2 gap-6 items-start">
-        
-        {/* Left Col: The Tree Hero Card */}
-        <div className="lg:col-span-1">
-           <TreeHeroCard 
-             stage={treeStage}
-             streak={streak}
-             progressPct={progressPercent}
-             sizeVariant="large"
-             isWilted={streak === 0 && treeStage > 1} 
-           />
-        </div>
+    return (
+        <main className="container mx-auto px-4 py-8" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <header style={{ marginTop: '1rem' }}>
+                <h1 style={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: '1.2', letterSpacing: '-0.02em', maxWidth: '10ch' }}>
+                    My <br />
+                    <span style={{ opacity: 0.6 }}>Progress.</span>
+                </h1>
+            </header>
 
-        {/* Right Col: Stats & History */}
-        <div className="lg:col-span-1 space-y-6 flex flex-col h-full">
-           
-           <div className="grid grid-cols-2 gap-4">
-             <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container-high relative overflow-hidden">
-               <span className="material-symbols-outlined absolute top-4 right-4 text-primary text-4xl opacity-10">history</span>
-               <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Weekly Avg</p>
-               <p className="text-[2.5rem] font-extrabold text-primary leading-none mt-2">85%</p>
-             </div>
-             <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-container-high relative overflow-hidden">
-               <span className="material-symbols-outlined absolute top-4 right-4 text-secondary text-4xl opacity-10">local_fire_department</span>
-               <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Best Streak</p>
-               <p className="text-[2.5rem] font-extrabold text-secondary leading-none mt-2">{Math.max(streak, 14)}d</p>
-             </div>
-           </div>
+            {/* Overview Stats */}
+            <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="card" style={{ padding: '1.5rem', background: 'var(--color-surface-container-high)', border: '1px solid var(--color-outline-variant)', borderRadius: '1.5rem' }}>
+                    <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-on-surface-variant)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Weekly Average</p>
+                    <p style={{ fontSize: '2.5rem', color: 'var(--color-primary)', fontWeight: 800, marginTop: '0.25rem' }}>
+                        {adherenceData[6].percent}%
+                    </p>
+                </div>
+                <div className="card" style={{ padding: '1.5rem', background: 'var(--color-surface-container-low)', borderRadius: '1.5rem' }}>
+                    <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-on-surface-variant)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Current Streak</p>
+                    <p style={{ fontSize: '2.5rem', color: 'var(--color-secondary)', fontWeight: 800, marginTop: '0.25rem' }}>
+                        3 d
+                    </p>
+                </div>
+            </section>
 
-           <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm flex-1">
-             <h2 className="text-lg font-extrabold text-on-surface mb-6 flex items-center gap-2">
-               <span className="material-symbols-outlined">calendar_month</span> Last 7 Days
-             </h2>
-             
-             <div className="flex justify-between items-end h-[160px] gap-2">
-               {past7Days.map((d, i) => (
-                 <div key={i} className="flex flex-col items-center gap-3 flex-1 h-full justify-end group">
-                   <div className="w-full relative bg-surface-container h-[120px] rounded-full overflow-hidden">
-                     <div 
-                       className={`absolute bottom-0 left-0 right-0 rounded-full transition-all duration-1000 ${d.percent === 100 ? 'bg-primary' : (d.percent > 0 ? 'bg-secondary-container' : 'bg-transparent')}`}
-                       style={{ height: `${d.percent}%` }}
-                     />
-                   </div>
-                   <span className={`text-[11px] font-bold uppercase ${d.isToday ? 'text-primary' : 'text-on-surface-variant'} group-hover:text-primary transition-colors`}>
-                     {d.dayName}
-                   </span>
-                 </div>
-               ))}
-             </div>
-           </div>
+            {/* Adherence Graph (Mock Calendar) */}
+            <section style={{ margin: 0 }}>
+                <div className="card" style={{ padding: '1.5rem', background: 'var(--color-surface-container-lowest)', borderRadius: '1.5rem', border: '1px solid var(--color-surface-container-high)' }}>
+                    <h2 style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <CalendarIcon size={20} /> Last 7 Days
+                    </h2>
 
-           {/* Today's breakdown */}
-           <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-sm">
-             <div className="flex justify-between items-center mb-4">
-               <h2 className="text-lg font-extrabold text-on-surface">Today's Log</h2>
-               <span className="text-sm font-bold text-on-surface-variant/60">{takenCount}/{totalMeds}</span>
-             </div>
-             <div className="space-y-2">
-               {["Magnesium", "Sertraline", "Atorvastatin"].map((name, i) => {
-                 const isTaken = i < takenCount;
-                 return (
-                   <div key={i} className={`flex items-center justify-between p-3 rounded-2xl ${isTaken ? 'bg-surface-container-low' : 'border border-surface-container'}`}>
-                     <div className="flex items-center gap-3">
-                       <span className={`material-symbols-outlined ${isTaken ? 'text-tertiary' : 'text-outline/50'}`}>
-                         {isTaken ? 'check_circle' : 'radio_button_unchecked'}
-                       </span>
-                       <span className={`font-semibold text-sm ${isTaken ? 'text-on-surface line-through decoration-on-surface-variant/40' : 'text-on-surface'}`}>{name}</span>
-                     </div>
-                   </div>
-                 )
-               })}
-             </div>
-           </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: '120px', gap: '0.5rem' }}>
+                        {adherenceData.map((d, i) => (
+                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                                <div style={{
+                                    width: '100%',
+                                    height: '100px',
+                                    background: 'var(--color-surface-container-high)',
+                                    borderRadius: '9999px',
+                                    position: 'relative',
+                                    overflow: 'hidden'
+                                }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        height: `${d.percent}%`,
+                                        background: d.percent === 100 ? 'var(--color-primary)' : (d.percent > 0 ? 'var(--color-secondary-container)' : 'transparent'),
+                                        borderRadius: '9999px',
+                                        transition: 'height 0.5s ease-out'
+                                    }}></div>
+                                </div>
+                                <span style={{ fontSize: '0.65rem', fontWeight: 800, color: d.isToday ? 'var(--color-primary)' : 'var(--color-on-surface-variant)' }}>
+                                    {d.dayName}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
-           <TreeGallery />
-        </div>
-      </div>
-    </div>
-  );
+            {/* Today's Log History */}
+            <section style={{ margin: 0 }}>
+                <h2 style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: '1.5rem' }}>Today's Log</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {medications.map((med: any) => {
+                        const isLogged = logs.some((l: any) => l.dateStr === adherenceData[6].dateStr && l.medicationId === med.id);
+                        return (
+                            <div key={med.id} className="card" style={{
+                                margin: 0,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '1rem 1.5rem',
+                                borderLeft: isLogged ? '4px solid var(--color-primary)' : '4px solid var(--color-surface-dim)',
+                                background: 'var(--color-surface-container-lowest)',
+                                borderRadius: '1rem'
+                            }}>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span style={{ fontSize: '1rem', fontWeight: 800 }}>{med.name}</span>
+                                    <span style={{ fontSize: '0.875rem', color: 'var(--color-on-surface-variant)', fontWeight: 600 }}>Due {Array.isArray(med.time) ? med.time.join(", ") : med.time}</span>
+                                </div>
+                                <div>
+                                    {isLogged ? <CheckCircle2 color="var(--color-primary)" size={24} /> : <XCircle color="var(--color-surface-dim)" size={24} />}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </section>
+
+        </main>
+    );
 }

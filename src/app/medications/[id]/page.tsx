@@ -1,16 +1,20 @@
 import { MedicationDetailClient } from "./MedicationDetailClient";
-import { getMedicineBySlug, getAllMedicineSlugs } from '@/lib/db/nz-health';
 
+// With output: 'export', we can't pre-render all 2,047 medicines.
+// Instead, the client component fetches data on mount.
+// Only pre-render a few common ones for speed.
 export async function generateStaticParams() {
-  const medicines = await getAllMedicineSlugs();
-  return medicines.map((med) => ({
-    id: med.slug,
-  }));
+  return [
+    { id: "levothyroxine" },
+    { id: "lisinopril" },
+    { id: "metformin" },
+    { id: "paracetamol" },
+  ];
 }
 
-export default async function MedicationDetailPage({ params }: { params: { id: string } }) {
-  // Try finding in NZ DB first
-  const nzMed = await getMedicineBySlug(params.id);
+export default async function MedicationDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   
-  return <MedicationDetailClient initialId={params.id} nzData={nzMed} />;
+  // Pass just the ID — the client component will fetch NZ data itself
+  return <MedicationDetailClient initialId={id} />;
 }

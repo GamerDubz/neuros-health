@@ -12,7 +12,7 @@ const supabase = createClient()
  * Matches on generic name, display name, and brand names
  */
 export async function searchMedicines(query: string, limit = 10) {
-  if (!query || query.length < 2) return []
+  if (!query || query.length < 1) return []
 
   const { data, error } = await supabase
     .rpc('search_medicines', { query, max_results: limit })
@@ -119,7 +119,7 @@ export async function getMedicineSafety(slug: string) {
  * Search health conditions by name
  */
 export async function searchConditions(query: string, limit = 10) {
-  if (!query || query.length < 2) return []
+  if (!query || query.length < 1) return []
 
   const { data } = await supabase
     .from('health_conditions')
@@ -171,7 +171,7 @@ export async function getConditionsList(limit = 200) {
  * Search wellbeing topics
  */
 export async function searchWellbeing(query: string, limit = 10) {
-  if (!query || query.length < 2) return []
+  if (!query || query.length < 1) return []
 
   const { data } = await supabase
     .from('wellbeing_topics')

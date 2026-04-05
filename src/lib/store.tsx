@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 
 export interface Medication {
   id: string;
+  slug?: string;
   name: string;
   dose: string;
   frequency: string;
@@ -46,21 +47,21 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 const initialMeds: Medication[] = [
   { 
-    id: "m1", name: "Levothyroxine", dose: "100mcg", frequency: "Daily", time: ["08:30 AM"], type: "Pill",
+    id: "m1", slug: "levothyroxine", name: "Levothyroxine", dose: "100mcg", frequency: "Daily", time: ["08:30 AM"], type: "Pill",
     description: "Used to treat an underactive thyroid (hypothyroidism).",
     sideEffects: ["Weight changes", "Headache", "Tremors", "Nervousness"],
     warnings: ["Seek emergency help if you have severe chest pain or uneven heartbeats."],
     selfCare: ["Take on an empty stomach, 30-60 minutes before breakfast.", "Take with a full glass of water."]
   },
   { 
-    id: "m2", name: "Lisinopril", dose: "20mg", frequency: "Once daily", time: ["10:15 PM"], type: "Tablet",
+    id: "m2", slug: "lisinopril", name: "Lisinopril", dose: "20mg", frequency: "Once daily", time: ["10:15 PM"], type: "Tablet",
     description: "An ACE inhibitor used to treat high blood pressure and heart failure.",
     sideEffects: ["Dry cough", "Dizziness", "Headache"],
     warnings: ["Do not use if pregnant. Call your doctor if you have signs of an allergic reaction (swelling of face/lips/tongue)."],
     selfCare: ["Drink plenty of water", "Avoid getting up too fast from a sitting or lying position"]
   },
   { 
-    id: "m4", name: "Metformin", dose: "500mg", frequency: "With lunch", time: ["01:00 PM"], type: "Tablet",
+    id: "m4", slug: "metformin", name: "Metformin", dose: "500mg", frequency: "With lunch", time: ["01:00 PM"], type: "Tablet",
     description: "Used to improve blood sugar control in adults with type 2 diabetes.",
     sideEffects: ["Nausea", "Stomach upset", "Diarrhea"],
     warnings: ["Lactic acidosis is a rare but serious complication. Seek immediate help if you experience unusual muscle pain, trouble breathing, or unusual sleepiness."],

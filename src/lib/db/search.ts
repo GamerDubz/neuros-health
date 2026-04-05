@@ -1,6 +1,7 @@
 // src/lib/db/search.ts
 
 import { searchMedicines, searchConditions, searchWellbeing } from './nz-health'
+import { fuzzySort } from '@/lib/fuzzy'
 
 export interface SearchResult {
   type: 'medicine' | 'condition' | 'wellbeing'
@@ -11,10 +12,10 @@ export interface SearchResult {
 }
 
 export async function globalSearch(query: string): Promise<SearchResult[]> {
-  if (!query || query.length < 2) return []
+  if (!query || query.length < 1) return []
 
   const [medicines, conditions, wellbeing] = await Promise.all([
-    searchMedicines(query, 5),
+    searchMedicines(query, 8),
     searchConditions(query, 5),
     searchWellbeing(query, 3),
   ])
@@ -43,5 +44,6 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
     })),
   ]
 
-  return results
+  // Apply fuzzy re-ranking so misspellings / phonetic matches bubble up
+  return fuzzySort(query, results, r => [r.title], 0.3)
 }

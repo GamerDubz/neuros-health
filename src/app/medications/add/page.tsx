@@ -6,10 +6,13 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { searchMedicines, getConditionsList } from '@/lib/db/nz-health';
+import { fuzzySort } from '@/lib/fuzzy';
+import { useStore } from '@/lib/store';
 import { debounce } from '@/lib/utils';
 
 export default function AddMedicationWizard() {
   const router = useRouter();
+  const { addMedication } = useStore();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -36,7 +39,7 @@ export default function AddMedicationWizard() {
 
   // Debounced search for medicines
   useEffect(() => {
-    if (!searchQuery || searchQuery.length < 2) {
+    if (!searchQuery || searchQuery.length < 1) {
       setResults([]);
       return;
     }
@@ -45,7 +48,21 @@ export default function AddMedicationWizard() {
       setIsSearching(true);
       try {
         const data = await searchMedicines(searchQuery);
-        setResults(data);
+
+        // Apply fuzzy re-ranking so misspellings surface the right medication
+        const q = searchQuery.toLowerCase();
+        const ranked = fuzzySort(
+          q,
+          data || [],
+          (item: any) => [
+            item.display_name || '',
+            item.generic_name || '',
+            ...(item.brand_names || []),
+          ],
+          0.25
+        );
+
+        setResults(ranked);
       } catch (err) {
         console.error(err);
       } finally {
@@ -67,6 +84,17 @@ export default function AddMedicationWizard() {
   const handleSave = () => {
     setLoading(true);
     setTimeout(() => {
+      // Save medication to store with slug for DB linking
+      addMedication({
+        id: `med-${Date.now()}`,
+        slug: selectedDrug?.slug || undefined,
+        name: selectedDrug?.display_name || selectedDrug?.name || searchQuery,
+        dose: `${dose}${doseUnit}`,
+        frequency,
+        time: frequency === 'As needed' ? ['As needed'] : timesOfDay,
+        type: 'Tablet',
+        conditionId: linkedCondition || undefined,
+      });
       setLoading(false);
       setSuccess(true);
       setTimeout(() => {
@@ -182,7 +210,7 @@ export default function AddMedicationWizard() {
                           <span className="material-symbols-outlined text-outline group-hover:text-primary transition-colors">arrow_forward_ios</span>
                         </button>
                       ))}
-                      {results.length === 0 && searchQuery.length >= 2 && (
+                      {results.length === 0 && searchQuery.length >= 1 && (
                         <div className="p-4 text-center text-on-surface-variant text-sm font-medium">
                           No matches found in NZ database.
                         </div>
