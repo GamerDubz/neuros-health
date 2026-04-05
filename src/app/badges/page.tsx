@@ -16,7 +16,7 @@ export default function BadgeCollectionPage() {
       unlockedAt: "Mar 15, 2026",
       condition: "Track 7 days in a row.",
       color: "primary",
-      icon: "🔥"
+      icon: "local_fire_department"
     },
     {
       id: "streak_30",
@@ -25,7 +25,7 @@ export default function BadgeCollectionPage() {
       unlockedAt: null,
       condition: "Track 30 days in a row.",
       color: "secondary",
-      icon: "🔥",
+      icon: "local_fire_department",
       progress: "18 left"
     },
     {
@@ -35,7 +35,7 @@ export default function BadgeCollectionPage() {
       unlockedAt: "Jan 10, 2026",
       condition: "Add your first medication.",
       color: "tertiary",
-      icon: "🌱"
+      icon: "eco"
     },
     {
       id: "tree_stage_3",
@@ -44,7 +44,7 @@ export default function BadgeCollectionPage() {
       unlockedAt: "Feb 28, 2026",
       condition: "Grow your tree to Stage 3.",
       color: "primary",
-      icon: "🌿"
+      icon: "spa"
     },
     {
       id: "symptom_pro",
@@ -53,7 +53,7 @@ export default function BadgeCollectionPage() {
       unlockedAt: "Mar 02, 2026",
       condition: "Use the Health Check tool 3 times.",
       color: "secondary",
-      icon: "🩺"
+      icon: "stethoscope"
     },
     {
       id: "tree_stage_7",
@@ -62,7 +62,7 @@ export default function BadgeCollectionPage() {
       unlockedAt: null,
       condition: "Grow your tree to Stage 7.",
       color: "tertiary",
-      icon: "🌳",
+      icon: "park",
       progress: "Stage 3/7"
     },
     {
@@ -72,7 +72,7 @@ export default function BadgeCollectionPage() {
       unlockedAt: null,
       condition: "Complete an entire month with 100% adherence.",
       color: "secondary",
-      icon: "✨",
+      icon: "auto_awesome",
       progress: "Not met"
     },
     {
@@ -82,7 +82,7 @@ export default function BadgeCollectionPage() {
       unlockedAt: "Feb 15, 2026",
       condition: "Take a medication scheduled after 10 PM.",
       color: "primary",
-      icon: "🦉"
+      icon: "nights_stay"
     }
   ];
 
@@ -136,7 +136,7 @@ export default function BadgeCollectionPage() {
                     badge.earned ? `bg-${badge.color}-fixed/40` : 'bg-surface-container-highest'
                   }`}>
                      {badge.earned ? (
-                        <span className="text-3xl md:text-4xl filter drop-shadow-sm">{badge.icon}</span>
+                        <span className={`material-symbols-outlined text-[32px] md:text-[40px] text-${badge.color} drop-shadow-sm`} style={{ fontVariationSettings: "'FILL' 1" }}>{badge.icon}</span>
                      ) : (
                         <span className="material-symbols-outlined text-outline text-[32px]">lock</span>
                      )}
@@ -169,7 +169,7 @@ export default function BadgeCollectionPage() {
                 selectedBadge.earned ? `bg-${selectedBadge.color}-container` : 'bg-surface-container border-2 border-dashed border-outline-variant'
               }`}>
                  {selectedBadge.earned ? (
-                   <span className="text-5xl filter drop-shadow-md">{selectedBadge.icon}</span>
+                   <span className={`material-symbols-outlined text-[56px] text-${selectedBadge.color} drop-shadow-md`} style={{ fontVariationSettings: "'FILL' 1" }}>{selectedBadge.icon}</span>
                  ) : (
                    <span className="material-symbols-outlined text-[48px] text-outline/50">lock</span>
                  )}
@@ -182,7 +182,7 @@ export default function BadgeCollectionPage() {
               {selectedBadge.earned ? (
                 <>
                   <div className="inline-flex items-center gap-2 bg-tertiary/10 text-tertiary px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-widest mb-4">
-                    <span className="text-base">✨</span> Earned {selectedBadge.unlockedAt}
+                    <span className="material-symbols-outlined text-[16px]">auto_awesome</span> Earned {selectedBadge.unlockedAt}
                   </div>
                   <p className="text-on-surface-variant text-base font-medium mx-auto max-w-xs">{selectedBadge.condition}</p>
                 </>

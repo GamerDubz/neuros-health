@@ -4,13 +4,17 @@ import { useState } from 'react'
 import type { DrugDetail } from '@/lib/db/drug-detail'
 
 const ICON_MAP: Record<string, string> = {
-  clock: '🕒', sun: '🌅', moon: '🌙', food: '🍽️', stomach: '🫙',
-  water: '💧', repeat: '🔁', pill: '💊', no_alcohol: '🚫',
-  warning: '⚠️', doctor: '👨‍⚕️', emergency: '🚨',
+  clock: 'schedule', sun: 'wb_sunny', moon: 'bedtime', food: 'restaurant', stomach: 'no_food',
+  water: 'water_drop', repeat: 'repeat', pill: 'medication', no_alcohol: 'no_drinks',
+  warning: 'warning', doctor: 'medical_services', emergency: 'emergency',
 }
 
-function renderIcon(name: string) {
-  return ICON_MAP[name] || '💊'
+function MaterialIcon({ name, className = '' }: { name: string; className?: string }) {
+  return (
+    <span className={`material-symbols-outlined ${className}`} aria-hidden>
+      {ICON_MAP[name] || 'medication'}
+    </span>
+  )
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -40,7 +44,8 @@ function DrugHeroBanner({
       )}
       {fundedNz && (
         <div className="mt-3 inline-flex items-center gap-2 bg-[#ffd87c] text-[#765a05] px-4 py-1.5 rounded-full text-sm font-bold">
-          ✓ Funded by PHARMAC in NZ
+          <span className="material-symbols-outlined text-[18px]" aria-hidden>verified</span>
+          Funded by PHARMAC in NZ
           {fundedNote && <span className="font-normal"> · {fundedNote}</span>}
         </div>
       )}
@@ -60,7 +65,7 @@ function BigThreeRow({ items }: { items: { icon: string; label: string }[] }) {
           key={i}
           className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-[0_10px_40px_rgba(21,28,39,0.04)] min-h-[88px]"
         >
-          <span className="text-3xl" aria-hidden>{renderIcon(item.icon)}</span>
+          <MaterialIcon name={item.icon} className="text-[32px] text-[#00685d]" />
           <span className="text-xs font-bold text-[#151c27] text-center leading-tight">
             {item.label}
           </span>
@@ -91,7 +96,7 @@ function VibeSummary({ text }: { text: string | null }) {
 function Accordion({
   icon, title, count, children, onCollapse,
 }: {
-  icon: string
+  icon: string // Material Symbol name
   title: string
   count?: number
   children: React.ReactNode
@@ -109,7 +114,7 @@ function Accordion({
         className="w-full flex items-center justify-between px-5 py-4 min-h-[56px] text-left active:bg-[#f0f3ff] transition-colors"
       >
         <div className="flex items-center gap-3">
-          <span className="text-xl">{icon}</span>
+          <span className="material-symbols-outlined text-[22px] text-[#00685d]" aria-hidden>{icon}</span>
           <span className="font-bold text-[#151c27]">
             {title}
             {count !== undefined && count > 0 && (
@@ -117,7 +122,7 @@ function Accordion({
             )}
           </span>
         </div>
-        <span className={`text-[#6d7a77] transition-transform duration-200 text-sm ${open ? 'rotate-180' : ''}`}>▼</span>
+        <span className={`material-symbols-outlined text-[#6d7a77] transition-transform duration-200 text-[20px] ${open ? 'rotate-180' : ''}`} aria-hidden>expand_more</span>
       </button>
       {open && <div className="border-t border-[#f0f3ff]">{children}</div>}
     </div>
@@ -128,9 +133,9 @@ function Accordion({
 // Side Effects — Traffic Light
 // ─────────────────────────────────────────────────────────────
 const TIERS = [
-  { key: 'green' as const, label: 'Common & Mild', headerBg: 'bg-[#dcfce7]', headerText: 'text-[#166534]', dot: 'bg-[#22c55e]', icon: '🟢' },
-  { key: 'yellow' as const, label: 'Tell Your Pharmacist', headerBg: 'bg-[#fef9c3]', headerText: 'text-[#854d0e]', dot: 'bg-[#f59e0b]', icon: '🟡' },
-  { key: 'red' as const, label: 'Emergency — Act Now', headerBg: 'bg-[#fee2e2]', headerText: 'text-[#991b1b]', dot: 'bg-[#ef4444]', icon: '🔴' },
+  { key: 'green' as const, label: 'Common & Mild', headerBg: 'bg-[#dcfce7]', headerText: 'text-[#166534]', dot: 'bg-[#22c55e]' },
+  { key: 'yellow' as const, label: 'Tell Your Pharmacist', headerBg: 'bg-[#fef9c3]', headerText: 'text-[#854d0e]', dot: 'bg-[#f59e0b]' },
+  { key: 'red' as const, label: 'Emergency — Act Now', headerBg: 'bg-[#fee2e2]', headerText: 'text-[#991b1b]', dot: 'bg-[#ef4444]' },
 ]
 
 function SideEffectsContent({ sideEffects }: { sideEffects: DrugDetail['side_effects'] }) {
@@ -150,7 +155,7 @@ function SideEffectsContent({ sideEffects }: { sideEffects: DrugDetail['side_eff
         return (
           <div key={tier.key}>
             <div className={`px-5 py-2 ${tier.headerBg} flex items-center gap-2`}>
-              <span>{tier.icon}</span>
+              <span className={`w-2.5 h-2.5 rounded-full ${tier.dot}`} aria-hidden />
               <span className={`text-sm font-bold ${tier.headerText}`}>{tier.label}</span>
             </div>
             <div className="px-5 py-3 space-y-3">
@@ -168,7 +173,8 @@ function SideEffectsContent({ sideEffects }: { sideEffects: DrugDetail['side_eff
                   href="tel:111"
                   className="flex items-center justify-center gap-2 bg-[#ba1a1a] text-white rounded-full h-12 font-bold text-sm mt-2 w-full"
                 >
-                  📞 Call 111 Now
+                  <span className="material-symbols-outlined text-[18px]" aria-hidden>call</span>
+                  Call 111 Now
                 </a>
               )}
             </div>
@@ -236,7 +242,7 @@ function HowToTakeContent({ items }: { items: DrugDetail['how_to_take'] }) {
     <div className="px-5 pb-5 space-y-3">
       {items.map((item, i) => (
         <div key={i} className="flex items-start gap-3 py-2">
-          <span className="text-xl flex-shrink-0 mt-0.5">{renderIcon(item.icon)}</span>
+          <MaterialIcon name={item.icon} className="text-[22px] text-[#00685d] flex-shrink-0 mt-0.5" />
           <div>
             <span className="font-semibold text-[#151c27] text-sm">{item.label}: </span>
             <span className="text-[#3d4947] text-sm">{item.detail}</span>
@@ -255,7 +261,7 @@ function RedZoneBox({ redZone }: { redZone: DrugDetail['red_zone'] }) {
   return (
     <div className="rounded-2xl bg-[#fef2f2] border-l-4 border-[#ba1a1a] p-5">
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-xl">🚨</span>
+        <span className="material-symbols-outlined text-[22px] text-[#ba1a1a]" aria-hidden>emergency</span>
         <h3 className="font-bold text-[#991b1b] text-sm uppercase tracking-wider">
           Overdose / Emergency
         </h3>
@@ -280,7 +286,8 @@ function RedZoneBox({ redZone }: { redZone: DrugDetail['red_zone'] }) {
             href="tel:111"
             className="flex-1 flex items-center justify-center gap-2 bg-[#ba1a1a] text-white rounded-full h-12 font-bold text-sm"
           >
-            📞 Call 111
+            <span className="material-symbols-outlined text-[18px]" aria-hidden>call</span>
+            Call 111
           </a>
         )}
         {redZone.phone_poisons && (
@@ -340,7 +347,10 @@ function TeachBackQuizModal({
         </div>
         {answered && (
           <div className={`rounded-xl p-4 ${correct ? 'bg-[#dcfce7]' : 'bg-[#fef9c3]'}`}>
-            <p className="text-sm font-bold mb-1">{correct ? '✓ Nice one!' : 'Good try!'}</p>
+            <p className="text-sm font-bold mb-1 inline-flex items-center gap-1">
+              {correct && <span className="material-symbols-outlined text-[18px]" aria-hidden>check_circle</span>}
+              {correct ? 'Nice one!' : 'Good try!'}
+            </p>
             <p className="text-sm text-[#3d4947]">{quiz.explanation}</p>
           </div>
         )}
@@ -383,13 +393,13 @@ export default function NeurosHealthCard({ drug }: { drug: DrugDetail }) {
       <VibeSummary text={drug.vibe_summary} />
 
       <div className="space-y-3">
-        <Accordion icon="💊" title="How to Take" onCollapse={handleHowToTakeCollapse}>
+        <Accordion icon="medication" title="How to Take" onCollapse={handleHowToTakeCollapse}>
           <HowToTakeContent items={drug.how_to_take || []} />
         </Accordion>
-        <Accordion icon="⚠️" title="Side Effects">
+        <Accordion icon="warning" title="Side Effects">
           <SideEffectsContent sideEffects={drug.side_effects} />
         </Accordion>
-        <Accordion icon="🔄" title="Interactions" count={drug.interactions?.length || 0}>
+        <Accordion icon="sync_alt" title="Interactions" count={drug.interactions?.length || 0}>
           <InteractionsContent interactions={drug.interactions || []} />
         </Accordion>
       </div>

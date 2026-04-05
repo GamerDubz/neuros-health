@@ -79,7 +79,7 @@ export function MedicationDetailClient({
     return (
       <div className="min-h-screen bg-[#f9f9ff] flex items-center justify-center px-6">
         <div className="text-center max-w-md">
-          <div className="text-5xl mb-4">💊</div>
+          <span className="material-symbols-outlined text-[56px] text-[#00685d] mb-4 block" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>medication</span>
           <h1 className="text-2xl font-bold text-[#151c27] mb-2">Medicine not found</h1>
           <p className="text-[#6d7a77] mb-6">
             We couldn&apos;t find info for &ldquo;{initialId}&rdquo;.

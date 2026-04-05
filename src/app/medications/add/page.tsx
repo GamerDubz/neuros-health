@@ -112,7 +112,7 @@ export default function AddMedicationWizard() {
     return (
       <div className="fixed inset-0 bg-surface z-50 flex flex-col items-center justify-center p-6 animate-fade-in">
          <div className="w-32 h-32 bg-primary-container rounded-full flex items-center justify-center mb-6 animate-[bounce_1s_ease-in-out]">
-            <span className="text-6xl">🌱</span>
+            <span className="material-symbols-outlined text-[64px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>eco</span>
          </div>
          <h1 className="text-3xl font-extrabold text-on-surface tracking-tight mb-2 text-center">
            {selectedDrug.display_name || selectedDrug.name} added!

@@ -59,8 +59,9 @@ export default function LandingPage() {
           {/* Left Column */}
           <div className="flex flex-col justify-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-low w-fit animate-fade-slide-down" style={{ animationDelay: "0.1s" }}>
+               <span className="material-symbols-outlined text-[16px] text-primary" aria-hidden>spa</span>
                <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                 🌿 Free to use · Private by design
+                 Free to use · Private by design
                </span>
             </div>
             
@@ -132,11 +133,13 @@ export default function LandingPage() {
 
              {/* Floating Badges */}
              <div className="absolute top-[80px] left-[-20px] bg-white/85 backdrop-blur-md px-4 py-2 rounded-2xl shadow-[0_20px_60px_rgba(21,28,39,0.10)] font-bold text-sm text-on-surface z-20 animate-scale-spring animate-float-badge flex items-center gap-2" style={{ animationDelay: "0.9s" }}>
-                🔥 12 Day Streak
+                <span className="material-symbols-outlined text-[18px] text-[#f97316]" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>local_fire_department</span>
+                12 Day Streak
              </div>
              
              <div className="absolute bottom-[60px] right-[-20px] bg-white/85 backdrop-blur-md px-4 py-2 rounded-2xl shadow-[0_20px_60px_rgba(21,28,39,0.10)] font-bold text-sm text-on-surface z-20 animate-scale-spring flex items-center gap-2" style={{ animationDelay: "1.1s", animation: "scaleSpring 0.6s ease 1.1s both, floatBadge 4s ease-in-out infinite 2s" }}>
-                ✅ Sertraline taken · 8:00 AM
+                <span className="material-symbols-outlined text-[18px] text-tertiary" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>check_circle</span>
+                Sertraline taken · 8:00 AM
              </div>
 
              <div className="absolute top-[160px] right-[-40px] bg-white/85 backdrop-blur-md px-4 py-2 rounded-2xl shadow-[0_20px_60px_rgba(21,28,39,0.10)] font-bold text-sm text-on-surface z-20 animate-scale-spring flex items-center gap-2" style={{ animationDelay: "1.3s" }}>
@@ -225,10 +228,10 @@ export default function LandingPage() {
          </div>
          <div className="flex items-center justify-center gap-4 mt-10">
             <div className="bg-surface-container-low px-5 py-2.5 rounded-full flex gap-2 items-center">
-               <span>🔒</span><span className="text-sm font-semibold text-on-surface-variant">Zero data selling</span>
+               <span className="material-symbols-outlined text-[18px] text-primary" aria-hidden>lock</span><span className="text-sm font-semibold text-on-surface-variant">Zero data selling</span>
             </div>
             <div className="bg-surface-container-low px-5 py-2.5 rounded-full flex gap-2 items-center">
-               <span>🇳🇿</span><span className="text-sm font-semibold text-on-surface-variant">NZ/AU data region</span>
+               <span className="material-symbols-outlined text-[18px] text-primary" aria-hidden>public</span><span className="text-sm font-semibold text-on-surface-variant">NZ/AU data region</span>
             </div>
          </div>
       </section>

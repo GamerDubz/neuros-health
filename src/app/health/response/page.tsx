@@ -115,10 +115,10 @@ export default function AIResponseScreen() {
                      'bg-error-container text-on-error-container border border-error/30'
                    }
                  `}>
-                   {data.triage === 'SELF_CARE' && <span className="text-xl">🟢</span>}
-                   {data.triage === 'SEE_PHARMACIST' && <span className="text-xl">🟡</span>}
-                   {data.triage === 'CALL_HEALTHLINE' && <span className="text-xl">🟠</span>}
-                   {data.triage === 'CALL_111' && <span className="text-xl">🔴</span>}
+                   {data.triage === 'SELF_CARE' && <span className="w-3 h-3 rounded-full bg-[#22c55e] shadow-inner" aria-hidden />}
+                   {data.triage === 'SEE_PHARMACIST' && <span className="w-3 h-3 rounded-full bg-[#eab308] shadow-inner" aria-hidden />}
+                   {data.triage === 'CALL_HEALTHLINE' && <span className="w-3 h-3 rounded-full bg-[#f97316] shadow-inner" aria-hidden />}
+                   {data.triage === 'CALL_111' && <span className="w-3 h-3 rounded-full bg-[#ef4444] shadow-inner" aria-hidden />}
                    {data.triage.replace(/_/g, " ")}
                  </div>
               </div>

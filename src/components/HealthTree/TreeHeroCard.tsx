@@ -60,9 +60,9 @@ export const TreeHeroCard: React.FC<TreeHeroCardProps> = ({
       {!hideStreak && (
         <div className={`tree-streak-chip ${isWilted || streak === 0 ? "broken" : ""}`}>
           {isWilted || streak === 0 ? (
-             <>💔 Streak broken</>
+             <><span className="material-symbols-outlined text-[16px] align-middle mr-1" aria-hidden>heart_broken</span>Streak broken</>
           ) : (
-            <>🔥 <span>{streak}</span> Day Streak!</>
+            <><span className="material-symbols-outlined text-[16px] align-middle mr-1" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>local_fire_department</span><span>{streak}</span> Day Streak!</>
           )}
         </div>
       )}

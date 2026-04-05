@@ -65,7 +65,7 @@ function DashboardContent() {
   return (
     <div className="space-y-8 animate-fade-in relative">
       
-      {/* 🚀 FIRST MEDICATION SETUP WIZARD */}
+      {/* FIRST MEDICATION SETUP WIZARD */}
       <AnimatePresence>
         {showSetup && (
           <FirstMedicationSetup onClose={() => setShowSetup(false)} />
@@ -74,7 +74,10 @@ function DashboardContent() {
 
       {/* Greeting Strip */}
       <div className="pt-2">
-        <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">Good morning, {user.name || "Alex"} 👋</h1>
+        <h1 className="text-3xl font-extrabold text-on-surface tracking-tight inline-flex items-center gap-2">
+          Good morning, {user.name || "Alex"}
+          <span className="material-symbols-outlined text-[28px] text-[#eab308]" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>waving_hand</span>
+        </h1>
         <p className="text-on-surface-variant text-sm mt-1">{dateString}</p>
       </div>
 

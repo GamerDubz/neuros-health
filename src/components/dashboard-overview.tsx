@@ -10,7 +10,7 @@ type IconType = React.ElementType | React.FunctionComponent<React.SVGProps<SVGSV
 // Define trend types
 export type TrendType = 'up' | 'down' | 'neutral';
 
-// --- 📦 API (Props) Definition ---
+// --- API (Props) Definition ---
 export interface DashboardMetricCardProps {
   /** The main value of the metric (e.g., "1,234", "$5.6M", "92%"). */
   value: string;

@@ -98,7 +98,7 @@ export function FirstMedicationSetup({ onClose }: { onClose: () => void }) {
                 
                 {/* Visual feedback of the reward */}
                 <div className="bg-tertiary-container/30 rounded-2xl p-4 mt-6 border border-tertiary-fixed-dim/20 flex gap-4 items-center">
-                  <span className="text-[32px]">🌱</span>
+                  <span className="material-symbols-outlined text-[32px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>eco</span>
                   <div>
                     <h4 className="font-bold text-sm text-on-surface">Plant your seed</h4>
                     <p className="text-[13px] text-on-surface-variant">Adding this will unlock your Health Tree.</p>
@@ -121,7 +121,12 @@ export function FirstMedicationSetup({ onClose }: { onClose: () => void }) {
              onClick={step === 1 ? handleNext : handleFinish}
              className="h-12 px-8 rounded-full gradient-primary text-white font-bold text-[15px] shadow-btn active:scale-95 transition-all flex items-center justify-center hover:brightness-105"
            >
-             {step === 1 ? "Continue" : "Plant My Tree 🌱"}
+             {step === 1 ? "Continue" : (
+               <span className="inline-flex items-center gap-2">
+                 Plant My Tree
+                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>eco</span>
+               </span>
+             )}
            </button>
         </div>
       </motion.div>

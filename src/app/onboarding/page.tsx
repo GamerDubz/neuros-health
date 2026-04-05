@@ -13,7 +13,8 @@ const SLIDES = [
     title: "Your data is\nyours.",
     desc: "Neuros Health does not sell your records to anyone, ever. Everything you log is securely stored with bank-grade encryption.",
     btnText: "Continue",
-    chip: "🔒 100% Private",
+    chipIcon: "lock",
+    chipText: "100% Private",
   },
   {
     id: 2,
@@ -22,7 +23,8 @@ const SLIDES = [
     title: "Never miss a\ndose.",
     desc: "Set your routines. Get gentle nudges. Build streaks that make you feel genuinely proud of your consistency.",
     btnText: "Continue",
-    chip: "⏰ Smart Tracking",
+    chipIcon: "alarm",
+    chipText: "Smart Tracking",
   },
   {
     id: 3,
@@ -31,7 +33,8 @@ const SLIDES = [
     title: "Watch your\nhealth grow.",
     desc: "Every day you stick to your routine, your Health Tree flourishes. It's a living reflection of your commitment to yourself.",
     btnText: "Create Account",
-    chip: "🌱 Meaningful Rewards",
+    chipIcon: "eco",
+    chipText: "Meaningful Rewards",
   },
 ];
 
@@ -90,8 +93,9 @@ export default function OnboardingCarousel() {
               transition={{ duration: 0.4, ease: "easeOut" }}
               className="flex flex-col flex-1"
             >
-              <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-surface-container-low text-xs font-bold uppercase tracking-wider text-on-surface-variant self-start mb-6">
-                 {slide.chip}
+              <div className="inline-flex items-center gap-1.5 justify-center px-4 py-1.5 rounded-full bg-surface-container-low text-xs font-bold uppercase tracking-wider text-on-surface-variant self-start mb-6">
+                 <span className="material-symbols-outlined text-[14px]" aria-hidden>{slide.chipIcon}</span>
+                 {slide.chipText}
               </div>
 
               <h1 className="text-[2.5rem] leading-[1.1] font-extrabold tracking-tight text-on-surface whitespace-pre-line mb-4">
