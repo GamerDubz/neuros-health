@@ -75,3 +75,51 @@ Primary teal: `#00685d` / `text-primary` / `bg-primary`
 Surface: `bg-surface-container-lowest`, `bg-surface-container-low`, `bg-surface-container-high`
 Text: `text-on-surface`, `text-on-surface-variant`, `text-outline`
 Danger: `#ba1a1a` / `bg-error-container`
+
+---
+
+## ⚠️ DO NOT BREAK — AI Coding Contract
+
+### Static export constraint
+`output: 'export'` in next.config.ts is required for GitHub Pages. Never remove it.
+Never add API routes (they don't work with static export).
+
+### Slug-based routing
+Every dynamic page needs its slug pre-rendered by `generateStaticParams()`.
+If a `drug_detail` or `medicines` record has no slug, it gets no page → 404.
+The YANA editor (https://yana-meds-db-changer.vercel.app) auto-generates slugs on create.
+After any DB change, the YANA editor triggers a GitHub Actions rebuild of this site.
+
+### JSONB field shapes — never change how these are READ without updating the YANA editor too
+
+| Field             | Shape                                                         |
+|-------------------|---------------------------------------------------------------|
+| `side_effects`    | `{ green: [{effect,note}], yellow: [...], red: [...] }`       |
+| `big3`            | `[{ icon: string, label: string }]`                           |
+| `how_to_take`     | `[{ icon: string, label: string, detail: string }]`           |
+| `interactions`    | `[{ interactant, severity: "low"\|"moderate"\|"high", note }]`|
+| `red_zone`        | `{ overdose_signs: string[], action, phone_111: bool, phone_poisons: string }` |
+| `teach_back_quiz` | `{ question, options: string[], correct_index: number, explanation }` |
+
+- `correct_index` = NUMBER (array index), not the answer text
+- `phone_111` = BOOLEAN, `phone_poisons` = STRING (NZ phone number)
+- `severity` must be exactly `"low"`, `"moderate"`, or `"high"` (lowercase)
+
+### Null safety — always guard JSONB fields
+```tsx
+// CORRECT
+const items = drug.how_to_take || []
+const effects = sideEffects?.[tier.key] || []
+const options = quiz.options || []
+
+// WRONG — will crash if field is null
+drug.how_to_take.map(...)
+```
+
+### generateStaticParams pagination — do not simplify
+The pagination loop (`range(from, from+999)`, break on empty/error) handles thousands of records.
+Never replace with a single `.select()` — Supabase caps at 1000 rows per query.
+
+### synthesizeDrugDetail — must always return a valid DrugDetail shape
+Used as fallback when `drug_detail` row doesn't exist for a slug.
+Do not change its return type or make it return null.
