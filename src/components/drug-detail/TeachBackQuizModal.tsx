@@ -12,7 +12,12 @@ export function TeachBackQuizModal({
 }) {
   const [picked, setPicked] = useState<number | null>(null);
   const answered = picked !== null;
-  const correct = picked === quiz.correct_index;
+  const options = quiz.options || [];
+  const correctIndex = typeof quiz.correct_index === 'number' ? quiz.correct_index : -1;
+  const correct = answered && picked === correctIndex && correctIndex < options.length;
+
+  // Nothing to show if the quiz is incomplete
+  if (!quiz.question || options.length === 0) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-4">
@@ -20,8 +25,8 @@ export function TeachBackQuizModal({
         <p className="text-xs font-bold uppercase tracking-widest text-primary">Quick Check</p>
         <p className="text-lg font-bold text-on-surface leading-snug">{quiz.question}</p>
         <div className="space-y-2">
-          {quiz.options.map((option, index) => {
-            const isCorrect = index === quiz.correct_index;
+          {options.map((option, index) => {
+            const isCorrect = index === correctIndex && correctIndex < options.length;
             const isPicked = index === picked;
             const baseClassName =
               "w-full text-left px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-colors";
