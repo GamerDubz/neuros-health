@@ -66,7 +66,7 @@ export function MedicationSearchStep({
               ))}
               {results.length === 0 && searchQuery.length >= 1 && (
                 <div className="p-4 text-center text-on-surface-variant text-sm font-medium">
-                  No matches found in NZ database.
+                  No matches found. Try a different spelling or add manually below.
                 </div>
               )}
             </>

@@ -7,7 +7,7 @@ export function AilmentEmptyState() {
       >
         search_off
       </span>
-      <h3 className="font-bold text-lg text-on-surface">No ailments found</h3>
+      <h3 className="font-bold text-lg text-on-surface">No conditions found</h3>
       <p className="text-sm text-on-surface-variant mt-1">
         Try searching for a different symptom or condition.
       </p>

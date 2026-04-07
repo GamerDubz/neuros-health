@@ -89,20 +89,20 @@ export default function BadgeCollectionPage() {
   const earnedCount = badges.filter(b => b.earned).length;
 
   return (
-    <div className="min-h-screen bg-surface.">
+    <div className="min-h-screen bg-surface">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/85 backdrop-blur-lg px-6 py-4 flex items-center gap-4 h-16 border-b border-surface-container/50 md:hidden">
         <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full text-primary active:scale-95 transition-transform">
           <span className="material-symbols-outlined text-[24px]">arrow_back</span>
         </button>
-        <h1 className="font-bold text-lg text-teal-800 tracking-tight">My Badges</h1>
+        <h1 className="font-bold text-lg text-primary tracking-tight">My Badges</h1>
       </header>
 
       <div className="max-w-4xl mx-auto pt-24 pb-36 px-6 lg:pt-12 lg:px-8">
          <div className="hidden lg:flex justify-between items-center mb-8">
             <h1 className="font-extrabold text-4xl text-on-surface tracking-tight">Badge Collection</h1>
-            <button onClick={() => router.push("/tracker")} className="text-primary font-bold text-sm hover:underline py-2 rounded-full">
-               ← Back to Tracker
+            <button onClick={() => router.push("/tracker")} className="text-primary font-bold text-sm hover:underline py-2 rounded-full flex items-center gap-1">
+               <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to Tracker
             </button>
          </div>
 

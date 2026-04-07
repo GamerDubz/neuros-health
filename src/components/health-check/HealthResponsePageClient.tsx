@@ -85,7 +85,7 @@ export default function HealthResponsePageClient() {
             arrow_back
           </span>
         </button>
-        <h1 className="font-bold text-lg text-teal-800 tracking-tight">
+        <h1 className="font-bold text-lg text-primary tracking-tight">
           Your Health Guidance
         </h1>
       </header>

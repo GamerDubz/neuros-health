@@ -24,13 +24,13 @@ export default function Dashboard() {
       {/* Surface Hierarchy: Nesting cards in a section group */}
       <section className="section-group">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: 'var(--title-md)', fontWeight: 700 }}>Active Protocols</h2>
-          <span className="chip" style={{ 
-            background: 'var(--surface-container-highest)', 
+          <h2 style={{ fontSize: 'var(--title-md)', fontWeight: 700 }}>Your Medications</h2>
+          <span className="chip" style={{
+            background: 'var(--surface-container-highest)',
             color: 'var(--on-surface-variant)',
             fontSize: 'var(--label-md)'
           }}>
-            {medications.length} Prescriptions
+            {medications.length} Medications
           </span>
         </div>
 
@@ -94,7 +94,7 @@ export default function Dashboard() {
                   fontSize: 'var(--label-md)', 
                   cursor: 'pointer' 
                 }}>
-                  Refill Needed
+                  View Details
                 </button>
               </div>
             </div>
@@ -102,25 +102,6 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Global Navigation - Glassmorphism Demo */}
-      <nav className="glass" style={{ 
-        position: 'fixed', 
-        bottom: '1rem', 
-        left: '1rem', 
-        right: '1rem', 
-        padding: '1rem 2rem', 
-        borderRadius: 'var(--radius-full)', 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08)'
-      }}>
-        <div style={{ color: 'var(--primary)', fontWeight: 800 }}>Health.</div>
-        <div style={{ display: 'flex', gap: '2rem', fontSize: 'var(--label-md)', fontWeight: 600 }}>
-          <span>Summary</span>
-          <span style={{ color: 'var(--on-surface-variant)', opacity: 0.5 }}>Account</span>
-        </div>
-      </nav>
     </main>
   );
 }

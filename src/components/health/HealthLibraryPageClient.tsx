@@ -42,7 +42,7 @@ export default function HealthLibraryPage() {
         <div className="hidden lg:block sticky top-24">
           <HealthLibrarySearchField
             query={query}
-            placeholder="Search ailments..."
+            placeholder="Search conditions..."
             onQueryChange={setQuery}
             className="mb-6"
             inputClassName="rounded-full text-sm"
@@ -60,7 +60,7 @@ export default function HealthLibraryPage() {
         <div className="pt-20 lg:pt-0 pb-36 px-6 lg:px-0">
           <div className="mb-6">
             <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
-              Common Ailments
+              Health Conditions
             </h1>
             <p className="text-on-surface-variant text-base">
               General guidance for everyday health concerns.

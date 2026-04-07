@@ -13,7 +13,7 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
   { key: "fever", label: "Fever", icon: "thermostat" },
   { key: "allergy", label: "Allergy", icon: "allergy" },
   { key: "mental_health", label: "Mental Health", icon: "psychology" },
-  { key: "eye_ear", label: "Eye & Ear", icon: "visibility" },
+  { key: "eye_ear", label: "Eye & Ear", icon: "hearing" },
 ];
 
 interface HealthCategoryFiltersProps {

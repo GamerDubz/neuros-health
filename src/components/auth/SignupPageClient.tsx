@@ -100,7 +100,7 @@ export default function Signup() {
 
         {/* Legal footprint */}
         <p className="text-[11px] text-center text-on-surface-variant mt-16 max-w-[280px] mx-auto opacity-70">
-          By continuing, you agree to our <Link href="#" className="underline">Terms of Service</Link> and verify that you have read our <Link href="#" className="underline">Privacy Policy</Link>.
+          By continuing, you verify that you have read our <Link href="/#privacy" className="underline">Privacy Policy</Link>.
         </p>
       </div>
     </div>

@@ -38,16 +38,10 @@ export function LandingFooter() {
             How It Works
           </Link>
           <Link
-            href="#pricing"
+            href="/signup"
             className="text-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
           >
-            Pricing
-          </Link>
-          <Link
-            href="#"
-            className="text-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-          >
-            Download App
+            Get Started
           </Link>
         </div>
         <div className="col-span-1 flex flex-col gap-3">
@@ -57,24 +51,6 @@ export function LandingFooter() {
             className="text-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
           >
             Privacy Policy
-          </Link>
-          <Link
-            href="#"
-            className="text-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-          >
-            Terms of Use
-          </Link>
-          <Link
-            href="#"
-            className="text-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-          >
-            Data Export
-          </Link>
-          <Link
-            href="#"
-            className="text-sm text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors"
-          >
-            Delete Account
           </Link>
         </div>
         <div className="col-span-1 flex flex-col gap-3">

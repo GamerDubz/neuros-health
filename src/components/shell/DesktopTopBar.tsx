@@ -21,9 +21,10 @@ export function DesktopTopBar() {
         </button>
         <Link
           href="/profile"
-          className="bg-primary-fixed text-on-primary-fixed rounded-full w-9 h-9 flex items-center justify-center font-bold text-sm hover:scale-105 transition-transform"
+          aria-label="View profile"
+          className="bg-primary-fixed text-on-primary-fixed rounded-full w-9 h-9 flex items-center justify-center hover:scale-105 transition-transform"
         >
-          JD
+          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>account_circle</span>
         </Link>
       </div>
     </header>

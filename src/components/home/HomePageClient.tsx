@@ -52,7 +52,7 @@ function DashboardContent() {
       {/* Greeting Strip */}
       <div className="pt-2">
         <h1 className="text-3xl font-extrabold text-on-surface tracking-tight inline-flex items-center gap-2">
-          Good morning, {user.name || "Alex"}
+          Good morning, {user.name || "there"}
           <span className="material-symbols-outlined text-[28px] text-[#eab308]" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>waving_hand</span>
         </h1>
         <p className="text-on-surface-variant text-sm mt-1">{dateString}</p>
@@ -79,9 +79,6 @@ function DashboardContent() {
               <div>
                 <h3 className="text-xl font-extrabold text-on-surface">Today's Meds</h3>
                 <p className="text-sm text-on-surface-variant mt-1">{takenCount} of {medications.length} taken</p>
-              </div>
-              <div className="bg-secondary-container text-on-secondary-container px-4 py-2 rounded-2xl font-bold text-sm">
-                {takenCount} / {medications.length} taken
               </div>
             </div>
 

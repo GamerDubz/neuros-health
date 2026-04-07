@@ -1,7 +1,6 @@
 "use client";
 
 import { useAppStore } from "@/hooks/useAppStore";
-import { UserCircle, Shield, Download, Trash2, Crown, Bell } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, updateUser } = useAppStore();
@@ -10,11 +9,11 @@ export default function ProfilePage() {
     <main className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '3rem' }}>
       <header style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <div style={{ width: '4rem', height: '4rem', background: 'var(--primary)', color: 'white', borderRadius: 'var(--radius-full)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <UserCircle size={40} />
+          <span className="material-symbols-outlined text-[40px]" style={{ fontVariationSettings: "'FILL' 1" }} aria-hidden>account_circle</span>
         </div>
         <div>
-          <h1 style={{ fontSize: 'var(--title-lg)', fontWeight: 800 }}>{user.name}</h1>
-          <p style={{ color: 'var(--on-surface-variant)', fontWeight: 600 }}>ID: 9812-NZ-HP</p>
+          <h1 style={{ fontSize: 'var(--title-lg)', fontWeight: 800 }}>{user.name || "Your Profile"}</h1>
+          <p style={{ color: 'var(--on-surface-variant)', fontWeight: 600 }}>Neuros Health</p>
         </div>
       </header>
 
@@ -29,7 +28,7 @@ export default function ProfilePage() {
                <span className="chip" style={{ background: 'var(--primary)', color: 'white' }}>Premium</span>
             ) : (
                <span className="chip" style={{ background: 'var(--surface-dim)', color: 'var(--on-surface-variant)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                 <Crown size={14} /> Basic
+                 <span className="material-symbols-outlined text-[14px]" aria-hidden>star</span> Basic
                </span>
             )}
           </div>
@@ -99,7 +98,7 @@ export default function ProfilePage() {
       {/* Data Privacy & GDPR */}
       <section className="section-group" style={{ margin: 0 }}>
         <h2 style={{ fontSize: 'var(--label-md)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--on-surface-variant)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-           <Shield size={16} /> Data Privacy
+           <span className="material-symbols-outlined text-[16px]" aria-hidden>shield</span> Data Privacy
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           
@@ -116,7 +115,7 @@ export default function ProfilePage() {
             fontWeight: 800,
             cursor: 'pointer'
           }}>
-            <Download size={20} /> Export Health Data (PDF)
+            <span className="material-symbols-outlined text-[20px]" aria-hidden>download</span> Export Health Data (PDF)
           </button>
 
           <button style={{ 
@@ -133,7 +132,7 @@ export default function ProfilePage() {
             fontWeight: 800,
             cursor: 'pointer'
           }}>
-            <Trash2 size={20} /> Delete Account
+            <span className="material-symbols-outlined text-[20px]" aria-hidden>delete</span> Delete Account
           </button>
 
         </div>

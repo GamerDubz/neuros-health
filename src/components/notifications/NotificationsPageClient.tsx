@@ -56,7 +56,7 @@ export default function NotificationsPage() {
           <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full text-primary active:scale-95 transition-transform">
             <span className="material-symbols-outlined text-[24px]">arrow_back</span>
           </button>
-          <h1 className="font-bold text-lg text-teal-800 tracking-tight">Notifications</h1>
+          <h1 className="font-bold text-lg text-primary tracking-tight">Notifications</h1>
         </div>
         <button className="text-primary text-sm font-semibold active:opacity-50 transition-opacity">
           Mark all read
