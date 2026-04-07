@@ -1,0 +1,134 @@
+"use client";
+
+import { useAppStore } from "@/hooks/useAppStore";
+import { LogEntry, Medication } from "@/types/store";
+import { Calendar as CalendarIcon, CheckCircle2, XCircle } from "lucide-react";
+
+export default function TrackerScratch() {
+    const { logs, medications, user } = useAppStore();
+
+    const today = new Date();
+    const todayKey = today.toISOString().split("T")[0];
+    const past7Days = Array.from({ length: 7 }).map((_, i) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() - (6 - i));
+        return d.toISOString().split("T")[0];
+    });
+
+    const adherenceData = past7Days.map(dateStr => {
+        const logsForDate = logs.filter((log: LogEntry) => log.dateStr === dateStr);
+        const expected = medications.length;
+        const percent = expected === 0 ? 0 : Math.round((logsForDate.length / expected) * 100);
+
+        return {
+            dateStr,
+            dayName: new Date(`${dateStr}T12:00:00`).toLocaleDateString("en-US", { weekday: "short" }),
+            percent,
+            isToday: dateStr === todayKey,
+        };
+    });
+
+    const latestDay = adherenceData[adherenceData.length - 1];
+    const weeklyAverage = adherenceData.length === 0
+        ? 0
+        : Math.round(adherenceData.reduce((sum, day) => sum + day.percent, 0) / adherenceData.length);
+
+    return (
+        <main className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <header style={{ marginTop: '1rem' }}>
+                <h1 style={{ fontSize: 'var(--display-lg)', lineHeight: '1.2', letterSpacing: '-0.02em', maxWidth: '10ch' }}>
+                    My <br />
+                    <span style={{ opacity: 0.6 }}>Progress.</span>
+                </h1>
+            </header>
+
+            {/* Overview Stats */}
+            <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="card" style={{ padding: '1.5rem', background: 'var(--surface-container-high)', border: '1px solid var(--outline-variant)' }}>
+                    <p style={{ fontSize: 'var(--label-md)', fontWeight: 800, color: 'var(--on-surface-variant)' }}>Weekly Average</p>
+                    <p style={{ fontSize: 'var(--display-lg)', color: 'var(--primary)', fontWeight: 800, marginTop: '0.25rem' }}>
+                        {weeklyAverage}%
+                    </p>
+                </div>
+                <div className="card" style={{ padding: '1.5rem', background: 'var(--surface-container-low)' }}>
+                    <p style={{ fontSize: 'var(--label-md)', fontWeight: 800, color: 'var(--on-surface-variant)' }}>Current Streak</p>
+                    <p style={{ fontSize: 'var(--display-lg)', color: 'var(--secondary)', fontWeight: 800, marginTop: '0.25rem' }}>
+                        {user.streakDays} d
+                    </p>
+                </div>
+            </section>
+
+            {/* Adherence Graph (Mock Calendar) */}
+            <section className="section-group" style={{ margin: 0 }}>
+                <div className="card" style={{ padding: '1.5rem' }}>
+                    <h2 style={{ fontSize: 'var(--title-md)', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <CalendarIcon size={20} /> Last 7 Days
+                    </h2>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: '120px', gap: '0.5rem' }}>
+                        {adherenceData.map((d, i) => (
+                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                                <div style={{
+                                    width: '100%',
+                                    height: '100px',
+                                    background: 'var(--surface-container-high)',
+                                    borderRadius: 'var(--radius-full)',
+                                    position: 'relative',
+                                    overflow: 'hidden'
+                                }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        height: `${d.percent}%`,
+                                        background: d.percent === 100 ? 'var(--primary)' : (d.percent > 0 ? 'var(--secondary-container)' : 'transparent'),
+                                        borderRadius: 'var(--radius-full)',
+                                        transition: 'height 0.5s ease-out'
+                                    }}></div>
+                                </div>
+                                <span style={{ fontSize: '0.65rem', fontWeight: 800, color: d.isToday ? 'var(--primary)' : 'var(--on-surface-variant)' }}>
+                                    {d.dayName}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Today's Log History */}
+            <section className="section-group" style={{ margin: 0 }}>
+                <h2 style={{ fontSize: 'var(--title-md)', fontWeight: 800, marginBottom: '1.5rem' }}>Today's Log</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {medications.map((medication: Medication) => {
+                        const isLogged = logs.some(
+                            (log: LogEntry) => log.dateStr === latestDay.dateStr && log.medicationId === medication.id
+                        );
+                        return (
+                            <div key={medication.id} className="card" style={{
+                                margin: 0,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '1rem 1.5rem',
+                                borderLeft: isLogged ? '4px solid var(--primary)' : '4px solid var(--surface-dim)',
+                                background: 'var(--surface-container-lowest)'
+                            }}>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span style={{ fontSize: 'var(--title-sm)', fontWeight: 800 }}>{medication.name}</span>
+                                    <span style={{ fontSize: 'var(--body-sm)', color: 'var(--on-surface-variant)', fontWeight: 600 }}>
+                                        Due {Array.isArray(medication.time) ? medication.time.join(", ") : medication.time}
+                                    </span>
+                                </div>
+                                <div>
+                                    {isLogged ? <CheckCircle2 color="var(--primary)" size={24} /> : <XCircle color="var(--surface-dim)" size={24} />}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </section>
+
+        </main>
+    );
+}

@@ -4,10 +4,8 @@ export const createClient = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!url || !url.startsWith('http')) {
-    throw new Error(
-      `Invalid or missing NEXT_PUBLIC_SUPABASE_URL: "${url}". Ensure it starts with https:// and is added to GitHub secrets.`
-    );
+  if (!url) {
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL. Ensure it is added to GitHub secrets.');
   }
 
   if (!anonKey) {
