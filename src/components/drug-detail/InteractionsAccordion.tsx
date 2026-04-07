@@ -5,9 +5,9 @@ import type { DrugDetail } from "@/lib/db/drug-detail";
 import { Accordion } from "@/components/drug-detail/Accordion";
 
 const SEVERITY_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  low: { bg: "bg-[#e2e8f8]", text: "text-[#3d4947]", label: "Low" },
+  low: { bg: "bg-surface-container-high", text: "text-on-surface-variant", label: "Low" },
   moderate: { bg: "bg-[#fef9c3]", text: "text-[#854d0e]", label: "Moderate" },
-  high: { bg: "bg-[#fee2e2]", text: "text-[#991b1b]", label: "High" },
+  high: { bg: "bg-error-container", text: "text-on-error-container", label: "High" },
 };
 
 export function InteractionsAccordion({ interactions }: { interactions: DrugDetail["interactions"] }) {
@@ -19,7 +19,7 @@ export function InteractionsAccordion({ interactions }: { interactions: DrugDeta
   return (
     <Accordion icon="sync_alt" title="Interactions" count={interactions?.length || 0}>
       {!interactions.length ? (
-        <p className="text-sm text-[#6d7a77] text-center py-6 px-5">No interactions recorded.</p>
+        <p className="text-sm text-on-surface-variant text-center py-6 px-5">No interactions recorded.</p>
       ) : (
         <div className="px-5 pb-5">
           <input
@@ -27,7 +27,7 @@ export function InteractionsAccordion({ interactions }: { interactions: DrugDeta
             placeholder="Search interactions..."
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            className="w-full h-11 bg-[#e2e8f8] rounded-xl px-4 text-sm mt-4 mb-3 text-[#151c27] placeholder:text-[#6d7a77] outline-none focus:ring-2 focus:ring-[#00685d]"
+            className="w-full h-11 bg-surface-container-high rounded-xl px-4 text-sm mt-4 mb-3 text-on-surface placeholder:text-on-surface-variant outline-none focus:ring-2 focus:ring-primary"
           />
           <div className="space-y-3">
             {filteredInteractions.map((item, index) => {
@@ -35,18 +35,18 @@ export function InteractionsAccordion({ interactions }: { interactions: DrugDeta
 
               return (
                 <div key={index} className="flex items-start gap-3 py-1">
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full flex-shrink-0 mt-0.5 ${severity.bg} ${severity.text}`}>
+                  <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 mt-0.5 ${severity.bg} ${severity.text}`}>
                     {severity.label}
                   </span>
                   <div>
-                    <span className="font-semibold text-[#151c27] text-sm">{item.interactant}</span>
-                    <p className="text-[#3d4947] text-sm mt-0.5">{item.note}</p>
+                    <span className="font-semibold text-on-surface text-sm">{item.interactant}</span>
+                    <p className="text-on-surface-variant text-sm mt-0.5">{item.note}</p>
                   </div>
                 </div>
               );
             })}
             {filteredInteractions.length === 0 && (
-              <p className="text-sm text-[#6d7a77] text-center py-3">No interactions found</p>
+              <p className="text-sm text-on-surface-variant text-center py-3">No interactions found</p>
             )}
           </div>
         </div>

@@ -31,7 +31,7 @@ export function HealthCategoryFilters({
         <button
           key={category.key}
           onClick={() => onSelectCategory(category.key)}
-          className={`flex min-h-[48px] items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap active:scale-95 transition-all flex-shrink-0 ${
+          className={`flex min-h-[48px] items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap active:scale-95 transition-all shrink-0 ${
             selectedCategory === category.key
               ? "bg-primary text-on-primary shadow-md"
               : "bg-surface-container-lowest text-on-surface shadow-sm"

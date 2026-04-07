@@ -34,7 +34,7 @@ export function LandingHowItWorksSection() {
           {HOW_IT_WORKS_STEPS.map((step, index) => (
             <div
               key={step.num}
-              className="bg-surface-container-lowest p-8 rounded-[1.5rem] shadow-[0_10px_40px_rgba(21,28,39,0.04)] relative animate-fade-slide-up hover:-translate-y-2 transition-transform duration-300"
+              className="bg-surface-container-lowest p-8 rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)] relative animate-fade-slide-up hover:-translate-y-2 transition-transform duration-300"
               style={{ animationDelay: `${index * 0.15}s` }}
             >
               <span className="absolute top-4 right-6 text-[3rem] font-extrabold text-primary opacity-20">

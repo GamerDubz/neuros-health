@@ -117,7 +117,7 @@ export default function NotificationsPage() {
          
          {notifications.length === 0 && (
            <div className="py-20 flex flex-col items-center text-center">
-             <div className="w-24 h-24 bg-surface-container rounded-[2rem] flex items-center justify-center mb-6">
+             <div className="w-24 h-24 bg-surface-container rounded-4xl flex items-center justify-center mb-6">
                <span className="material-symbols-outlined text-[40px] text-outline/40">notifications_paused</span>
              </div>
              <p className="font-bold text-lg text-on-surface">You're all caught up</p>

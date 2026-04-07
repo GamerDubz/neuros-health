@@ -115,7 +115,7 @@ export default function BadgeCollectionPage() {
               </p>
             </div>
             <div className="w-full md:w-48 bg-white/60 h-3 rounded-full overflow-hidden shadow-inner">
-               <div className="bg-gradient-to-r from-primary to-primary-container h-full rounded-full transition-all duration-1000" style={{ width: `${(earnedCount/badges.length)*100}%` }}></div>
+               <div className="bg-linear-to-r from-primary to-primary-container h-full rounded-full transition-all duration-1000" style={{ width: `${(earnedCount/badges.length)*100}%` }}></div>
             </div>
          </div>
 
@@ -154,7 +154,7 @@ export default function BadgeCollectionPage() {
 
       {/* Detail Bottom Sheet (Mobile) / Modal (Desktop) */}
       {selectedBadge && (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center md:items-center p-0 md:p-6 pb-0">
+        <div className="fixed inset-0 z-100 flex items-end justify-center md:items-center p-0 md:p-6 pb-0">
            {/* Backdrop */}
            <div 
              className="absolute inset-0 bg-on-surface/20 backdrop-blur-sm transition-opacity"

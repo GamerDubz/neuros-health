@@ -20,7 +20,7 @@ export function FirstMedicationSetup({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6 pb-0">
+    <div className="fixed inset-0 z-100 flex items-end sm:items-center justify-center p-0 sm:p-6 pb-0">
       {/* Backdrop */}
       <motion.div 
         initial={{ opacity: 0 }} 
@@ -36,7 +36,7 @@ export function FirstMedicationSetup({ onClose }: { onClose: () => void }) {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="relative z-10 w-full max-w-[500px] bg-surface rounded-t-[2rem] sm:rounded-3xl shadow-3xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="relative z-10 w-full max-w-[500px] bg-surface rounded-t-4xl sm:rounded-3xl shadow-3xl overflow-hidden flex flex-col max-h-[90vh]"
       >
         <div className="p-6 sm:p-8 flex-1 overflow-y-auto">
           {/* Header */}

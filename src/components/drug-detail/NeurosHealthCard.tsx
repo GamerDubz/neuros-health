@@ -43,7 +43,7 @@ export default function NeurosHealthCard({ drug }: { drug: DrugDetail }) {
 
       <RedZoneBox redZone={drug.red_zone} />
 
-      <div className="text-xs text-[#6d7a77] text-center pt-2 pb-4">
+      <div className="text-xs text-on-surface-variant text-center pt-2 pb-4">
         {drug.last_reviewed_date && <>Reviewed {drug.last_reviewed_date} · </>}
         Information from Healthify He Puna Waiora &amp; Medsafe NZ
         {drug.medsafe_cmi_url && (

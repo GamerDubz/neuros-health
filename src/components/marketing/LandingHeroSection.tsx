@@ -80,7 +80,7 @@ export function LandingHeroSection() {
 
         <div className="relative flex items-center justify-center h-[600px]">
           <div
-            className="w-[300px] h-[600px] rounded-[3rem] bg-surface-container-lowest shadow-[0_40px_80px_rgba(21,28,39,0.12)] border-8 border-surface-container rotate-[2deg] overflow-hidden flex flex-col relative z-10 animate-scale-spring"
+            className="w-[300px] h-[600px] rounded-[3rem] bg-surface-container-lowest shadow-[0_40px_80px_rgba(21,28,39,0.12)] border-8 border-surface-container rotate-2 overflow-hidden flex flex-col relative z-10 animate-scale-spring"
             style={{ animationDelay: "0.4s" }}
           >
             <div className="px-5 py-4 flex justify-between items-center bg-surface/80 backdrop-blur-md z-20 sticky top-0">
@@ -91,7 +91,7 @@ export function LandingHeroSection() {
               <div className="w-32 h-6 rounded bg-surface-container mb-2" />
               <div className="w-20 h-3 rounded bg-surface-container-low mb-6" />
 
-              <div className="h-48 rounded-2xl bg-gradient-to-br from-primary-fixed to-surface-container-low p-4 flex flex-col items-center justify-center relative mb-6">
+              <div className="h-48 rounded-2xl bg-linear-to-br from-primary-fixed to-surface-container-low p-4 flex flex-col items-center justify-center relative mb-6">
                 <div className="absolute top-3 right-3 w-16 h-5 rounded-full bg-white/50 backdrop-blur-sm" />
                 <span
                   className="material-symbols-outlined text-[80px] text-primary"

@@ -53,7 +53,7 @@ export default function OnboardingCarousel() {
   const slide = SLIDES[currentSlide];
 
   return (
-    <div className="relative min-h-[100dvh] bg-gradient-to-br from-surface to-primary-container/20 flex flex-col justify-between overflow-hidden sm:justify-center sm:items-center">
+    <div className="relative min-h-dvh bg-linear-to-br from-surface to-primary-container/20 flex flex-col justify-between overflow-hidden sm:justify-center sm:items-center">
       {/* Background Orbs */}
       <div className="absolute top-[-100px] left-[-100px] w-96 h-96 bg-primary-fixed/20 blur-[100px] rounded-full sm:w-[600px] sm:h-[600px] opacity-60" />
       <div className="absolute bottom-[-100px] right-[-100px] w-96 h-96 bg-tertiary-fixed/20 blur-[100px] rounded-full sm:w-[600px] sm:h-[600px] opacity-60" />

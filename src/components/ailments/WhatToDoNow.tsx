@@ -12,7 +12,7 @@ export default function WhatToDoNow({ steps }: { steps: ActionStep[] }) {
         {steps.map((step, i) => (
           <div key={i} className="flex items-start gap-4 px-5 py-4">
             <span
-              className="material-symbols-outlined text-2xl text-primary flex-shrink-0 mt-0.5"
+              className="material-symbols-outlined text-2xl text-primary shrink-0 mt-0.5"
               aria-hidden
             >
               {step.icon}

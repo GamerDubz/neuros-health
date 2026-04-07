@@ -27,7 +27,7 @@ export default function LandingPageClient() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-surface to-primary-container/10 font-sans text-on-surface relative overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-surface to-primary-container/10 font-sans text-on-surface relative overflow-hidden">
       <LandingBackground />
       <LandingNavbar />
       <LandingHeroSection />

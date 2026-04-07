@@ -23,24 +23,24 @@ export function Accordion({
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-[0_10px_40px_rgba(21,28,39,0.04)] overflow-hidden">
+    <div className="bg-surface-container-lowest rounded-2xl shadow-[0_10px_40px_rgba(21,28,39,0.04)] overflow-hidden">
       <button
         onClick={toggle}
-        className="w-full flex items-center justify-between px-5 py-4 min-h-[56px] text-left active:bg-[#f0f3ff] transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 min-h-[56px] text-left active:bg-surface-container-low transition-colors"
       >
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-[22px] text-[#00685d]" aria-hidden>
+          <span className="material-symbols-outlined text-[22px] text-primary" aria-hidden>
             {icon}
           </span>
-          <span className="font-bold text-[#151c27]">
+          <span className="font-bold text-on-surface">
             {title}
             {count !== undefined && count > 0 && (
-              <span className="ml-2 text-xs font-normal text-[#6d7a77]">({count})</span>
+              <span className="ml-2 text-xs font-normal text-on-surface-variant">({count})</span>
             )}
           </span>
         </div>
         <span
-          className={`material-symbols-outlined text-[#6d7a77] transition-transform duration-200 text-[20px] ${
+          className={`material-symbols-outlined text-on-surface-variant transition-transform duration-200 text-[20px] ${
             open ? "rotate-180" : ""
           }`}
           aria-hidden
@@ -48,7 +48,7 @@ export function Accordion({
           expand_more
         </span>
       </button>
-      {open && <div className="border-t border-[#f0f3ff]">{children}</div>}
+      {open && <div className="border-t border-surface-container-low">{children}</div>}
     </div>
   );
 }

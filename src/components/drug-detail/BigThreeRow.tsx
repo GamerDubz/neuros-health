@@ -8,10 +8,10 @@ export function BigThreeRow({ items }: { items: { icon: string; label: string }[
       {items.slice(0, 3).map((item, index) => (
         <div
           key={index}
-          className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-[0_10px_40px_rgba(21,28,39,0.04)] min-h-[88px]"
+          className="bg-surface-container-lowest rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-[0_10px_40px_rgba(21,28,39,0.04)] min-h-[88px]"
         >
-          <MaterialIcon name={item.icon} className="text-[32px] text-[#00685d]" />
-          <span className="text-xs font-bold text-[#151c27] text-center leading-tight">
+          <MaterialIcon name={item.icon} className="text-[32px] text-primary" />
+          <span className="text-xs font-bold text-on-surface text-center leading-tight">
             {item.label}
           </span>
         </div>

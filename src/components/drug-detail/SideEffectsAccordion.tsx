@@ -4,7 +4,7 @@ import { Accordion } from "@/components/drug-detail/Accordion";
 const TIERS = [
   { key: "green" as const, label: "Common & Mild", headerBg: "bg-[#dcfce7]", headerText: "text-[#166534]", dot: "bg-[#22c55e]" },
   { key: "yellow" as const, label: "Tell Your Pharmacist", headerBg: "bg-[#fef9c3]", headerText: "text-[#854d0e]", dot: "bg-[#f59e0b]" },
-  { key: "red" as const, label: "Emergency — Act Now", headerBg: "bg-[#fee2e2]", headerText: "text-[#991b1b]", dot: "bg-[#ef4444]" },
+  { key: "red" as const, label: "Emergency — Act Now", headerBg: "bg-error-container", headerText: "text-on-error-container", dot: "bg-error" },
 ];
 
 export function SideEffectsAccordion({ sideEffects }: { sideEffects: DrugDetail["side_effects"] }) {
@@ -13,7 +13,7 @@ export function SideEffectsAccordion({ sideEffects }: { sideEffects: DrugDetail[
   return (
     <Accordion icon="warning" title="Side Effects">
       {!hasAny ? (
-        <p className="text-sm text-[#6d7a77] text-center py-6">
+        <p className="text-sm text-on-surface-variant text-center py-6">
           No specific side effects recorded. Always tell your pharmacist if something feels wrong.
         </p>
       ) : (
@@ -31,17 +31,17 @@ export function SideEffectsAccordion({ sideEffects }: { sideEffects: DrugDetail[
                 <div className="px-5 py-3 space-y-3">
                   {items.map((item, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${tier.dot}`} />
+                      <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${tier.dot}`} />
                       <div>
-                        <span className="font-semibold text-[#151c27] text-sm">{item.effect}</span>
-                        <p className="text-[#3d4947] text-sm mt-0.5">{item.note}</p>
+                        <span className="font-semibold text-on-surface text-sm">{item.effect}</span>
+                        <p className="text-on-surface-variant text-sm mt-0.5">{item.note}</p>
                       </div>
                     </div>
                   ))}
                   {tier.key === "red" && (
                     <a
                       href="tel:111"
-                      className="flex items-center justify-center gap-2 bg-[#ba1a1a] text-white rounded-full h-12 font-bold text-sm mt-2 w-full"
+                      className="flex items-center justify-center gap-2 bg-error text-white rounded-full h-12 font-bold text-sm mt-2 w-full"
                     >
                       <span className="material-symbols-outlined text-[18px]" aria-hidden>
                         call
