@@ -4,7 +4,6 @@ import { useState } from "react";
 import type { DrugDetail } from "@/lib/db/drug-detail";
 import { DrugHeroBanner } from "@/components/drug-detail/DrugHeroBanner";
 import { BigThreeRow } from "@/components/drug-detail/BigThreeRow";
-import { VibeSummary } from "@/components/drug-detail/VibeSummary";
 import { MaterialIcon } from "@/components/drug-detail/MaterialIcon";
 
 // ─── Tab content components (all inline, no modals) ─────────────────────────
@@ -439,11 +438,77 @@ function SvgLink() {
   );
 }
 
+// ─── Identity tab ─────────────────────────────────────────────────────────────
+function IdentityTab({ drug }: { drug: DrugDetail }) {
+  return (
+    <div className="space-y-4">
+      {/* Plain-English summary */}
+      {drug.vibe_summary?.trim() && (
+        <div className="bg-primary/8 rounded-2xl px-5 py-4">
+          <p className="text-sm font-bold text-primary uppercase tracking-widest mb-2">About this medicine</p>
+          <p className="text-on-surface text-sm leading-relaxed">{drug.vibe_summary}</p>
+        </div>
+      )}
+
+      {/* Drug class + brand names */}
+      <div className="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden divide-y divide-surface-container-low">
+        {drug.drug_class?.trim() && (
+          <div className="px-5 py-4 flex items-start gap-4">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden className="text-primary shrink-0 mt-0.5">
+              <rect x="3" y="3" width="8" height="8" rx="2" fill="currentColor" opacity="0.8" />
+              <rect x="13" y="3" width="8" height="8" rx="2" fill="currentColor" opacity="0.5" />
+              <rect x="3" y="13" width="8" height="8" rx="2" fill="currentColor" opacity="0.5" />
+              <rect x="13" y="13" width="8" height="8" rx="2" fill="currentColor" opacity="0.3" />
+            </svg>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-0.5">Drug Class</p>
+              <p className="text-sm text-on-surface font-semibold">{drug.drug_class}</p>
+            </div>
+          </div>
+        )}
+        {(drug.brand_names || []).length > 0 && (
+          <div className="px-5 py-4 flex items-start gap-4">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden className="text-primary shrink-0 mt-0.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.8" />
+              <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+              <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.7" />
+            </svg>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Brand Names</p>
+              <div className="flex flex-wrap gap-1.5">
+                {drug.brand_names.map((b, i) => (
+                  <span key={i} className="bg-surface-container-high text-on-surface text-xs font-semibold px-2.5 py-1 rounded-full">
+                    {b}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        {drug.funded_nz && drug.funded_note?.trim() && (
+          <div className="px-5 py-4 flex items-start gap-4">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden className="text-primary shrink-0 mt-0.5">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" opacity="0.3" />
+              <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-0.5">PHARMAC Funded</p>
+              <p className="text-sm text-on-surface">{drug.funded_note}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Tab definitions ──────────────────────────────────────────────────────────
-type TabKey = "how_to_take" | "side_effects" | "interactions" | "red_zone" | "quiz" | "info";
+type TabKey = "identity" | "how_to_take" | "side_effects" | "interactions" | "red_zone" | "quiz" | "info";
 
 function hasContent(key: TabKey, drug: DrugDetail): boolean {
   switch (key) {
+    case "identity":
+      return true; // always has drug name at minimum
     case "how_to_take":
       return (drug.how_to_take || []).length > 0 || (drug.big3 || []).length > 0;
     case "side_effects": {
@@ -478,6 +543,7 @@ function hasContent(key: TabKey, drug: DrugDetail): boolean {
 }
 
 const ALL_TABS: { key: TabKey; label: string; icon: string }[] = [
+  { key: "identity",     label: "Identity",     icon: "badge" },
   { key: "how_to_take",  label: "How to Take",  icon: "medication" },
   { key: "side_effects", label: "Side Effects",  icon: "warning" },
   { key: "interactions", label: "Interactions",  icon: "sync_alt" },
@@ -489,9 +555,7 @@ const ALL_TABS: { key: TabKey; label: string; icon: string }[] = [
 // ─── Main card ────────────────────────────────────────────────────────────────
 export default function NeurosHealthCard({ drug }: { drug: DrugDetail }) {
   const visibleTabs = ALL_TABS.filter((t) => hasContent(t.key, drug));
-  const [activeTab, setActiveTab] = useState<TabKey | null>(
-    visibleTabs.length > 0 ? visibleTabs[0].key : null
-  );
+  const [activeTab, setActiveTab] = useState<TabKey>("identity");
 
   return (
     <div className="space-y-4">
@@ -504,52 +568,48 @@ export default function NeurosHealthCard({ drug }: { drug: DrugDetail }) {
         fundedNote={drug.funded_note}
       />
 
-      {/* Plain-English summary */}
-      {drug.vibe_summary?.trim() && <VibeSummary text={drug.vibe_summary} />}
-
-      {/* Tab bar — only shows tabs with content */}
-      {visibleTabs.length > 0 && (
-        <div className="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden">
-          {/* Scrollable tab strip */}
-          <div className="overflow-x-auto">
-            <div className="flex min-w-max border-b border-surface-container-low px-2">
-              {visibleTabs.map((tab) => {
-                const isActive = activeTab === tab.key;
-                return (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key)}
-                    className={`flex items-center gap-1.5 px-4 py-3.5 text-sm font-bold whitespace-nowrap transition-colors border-b-2 -mb-px ${
-                      isActive
-                        ? "border-primary text-primary"
-                        : "border-transparent text-on-surface-variant hover:text-on-surface"
-                    }`}
+      {/* Tab bar — Identity always first, others only if filled */}
+      <div className="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden">
+        {/* Scrollable tab strip */}
+        <div className="overflow-x-auto">
+          <div className="flex min-w-max border-b border-surface-container-low px-2">
+            {visibleTabs.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`flex items-center gap-1.5 px-4 py-3.5 text-sm font-bold whitespace-nowrap transition-colors border-b-2 -mb-px ${
+                    isActive
+                      ? "border-primary text-primary"
+                      : "border-transparent text-on-surface-variant hover:text-on-surface"
+                  }`}
+                >
+                  <span
+                    className="material-symbols-outlined text-[16px]"
+                    style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+                    aria-hidden
                   >
-                    <span
-                      className="material-symbols-outlined text-[16px]"
-                      style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
-                      aria-hidden
-                    >
-                      {tab.icon}
-                    </span>
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Tab content */}
-          <div className="p-4">
-            {activeTab === "how_to_take"  && <HowToTakeTab drug={drug} />}
-            {activeTab === "side_effects" && <SideEffectsTab drug={drug} />}
-            {activeTab === "interactions" && <InteractionsTab drug={drug} />}
-            {activeTab === "red_zone"     && <RedZoneTab drug={drug} />}
-            {activeTab === "quiz"         && <QuizTab drug={drug} />}
-            {activeTab === "info"         && <InfoTab drug={drug} />}
+                    {tab.icon}
+                  </span>
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
-      )}
+
+        {/* Tab content */}
+        <div className="p-4">
+          {activeTab === "identity"      && <IdentityTab drug={drug} />}
+          {activeTab === "how_to_take"   && <HowToTakeTab drug={drug} />}
+          {activeTab === "side_effects"  && <SideEffectsTab drug={drug} />}
+          {activeTab === "interactions"  && <InteractionsTab drug={drug} />}
+          {activeTab === "red_zone"      && <RedZoneTab drug={drug} />}
+          {activeTab === "quiz"          && <QuizTab drug={drug} />}
+          {activeTab === "info"          && <InfoTab drug={drug} />}
+        </div>
+      </div>
     </div>
   );
 }
