@@ -43,6 +43,7 @@ export async function generateStaticParams() {
   return slugs.map(slug => ({ slug }))
 }
 
-export default function AilmentDetailPage({ params }: { params: { slug: string } }) {
-  return <AilmentDetailClient slug={params.slug} />
+export default async function AilmentDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  return <AilmentDetailClient slug={slug} />
 }
