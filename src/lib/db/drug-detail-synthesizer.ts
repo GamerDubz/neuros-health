@@ -84,27 +84,38 @@ export function synthesizeDrugDetail(medicine: any): DrugDetail {
     ? firstSentences(whatItIs, 2)
     : "This medicine is prescribed for specific conditions. Follow your doctor's instructions.";
 
-  const seriousEffects = cleanText(medicine?.serious_side_effects || "");
-  const commonEffects = cleanText(
-    medicine?.common_side_effects || medicine?.side_effects_combined || medicine?.side_effects || ""
-  );
+  // Prefer structured JSONB side_effects if the editor filled it in; fall back to synthesizing from text
+  let sideEffects: DrugDetail["side_effects"] = { green: [], yellow: [], red: [] };
+  const rawSe = medicine?.side_effects;
+  const hasStructured =
+    rawSe &&
+    typeof rawSe === "object" &&
+    ((rawSe.green?.length || 0) + (rawSe.yellow?.length || 0) + (rawSe.red?.length || 0)) > 0;
 
-  const sideEffects: DrugDetail["side_effects"] = { green: [], yellow: [], red: [] };
-  if (commonEffects) {
-    sideEffects.green.push({
-      effect: "Common side effects",
-      note: firstSentences(commonEffects, 2) || "Usually mild and settle with time.",
-    });
+  if (hasStructured) {
+    sideEffects = {
+      green: rawSe.green || [],
+      yellow: rawSe.yellow || [],
+      red: rawSe.red || [],
+    };
+  } else {
+    const commonEffects = cleanText(
+      medicine?.common_side_effects || medicine?.side_effects_combined || ""
+    );
+    const seriousEffects = cleanText(medicine?.serious_side_effects || "");
+    if (commonEffects) {
+      sideEffects.green.push({
+        effect: "Common side effects",
+        note: firstSentences(commonEffects, 2) || "Usually mild and settle with time.",
+      });
+    }
+    if (seriousEffects) {
+      sideEffects.red.push({
+        effect: "Serious reactions",
+        note: firstSentences(seriousEffects, 2),
+      });
+    }
   }
-
-  // Only add serious/red effects if we actually have text for them
-  if (seriousEffects) {
-    sideEffects.red.push({
-      effect: "Serious reactions",
-      note: firstSentences(seriousEffects, 2),
-    });
-  }
-  // No generic fallback — if there's no data, leave red empty
 
   // Prefer structured JSONB red_zone if the editor filled it in; fall back to synthesizing from overdose text
   let redZone: DrugDetail["red_zone"] = null;
