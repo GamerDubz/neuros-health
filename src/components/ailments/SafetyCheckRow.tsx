@@ -12,31 +12,33 @@ export default function SafetyCheckRow({ triage }: { triage: TriageItem[] }) {
       <p className="text-xs font-bold uppercase tracking-widest text-primary mb-4">
         What level of care do I need?
       </p>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="flex flex-col gap-3">
         {triage.map((item, i) => {
           const style = TRIAGE_STYLES[item.level] || TRIAGE_STYLES.home_care
           return (
             <div
               key={i}
-              className="rounded-xl p-3 border-l-4 flex flex-col gap-1"
+              className="rounded-xl px-4 py-3 border-l-4 flex items-start gap-3"
               style={{ borderColor: style.border, backgroundColor: style.bg }}
             >
               <span
-                className="material-symbols-outlined text-2xl"
+                className="material-symbols-outlined text-[24px] shrink-0 mt-0.5"
                 style={{ color: style.border }}
                 aria-hidden
               >
                 {item.icon}
               </span>
-              <span className="font-bold text-xs" style={{ color: style.text }}>
-                {item.label}
-              </span>
-              <span
-                className="text-xs leading-snug"
-                style={{ color: style.text, opacity: 0.8 }}
-              >
-                {item.detail}
-              </span>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm" style={{ color: style.text }}>
+                  {item.label}
+                </p>
+                <p
+                  className="text-sm leading-snug mt-0.5"
+                  style={{ color: style.text, opacity: 0.8 }}
+                >
+                  {item.detail}
+                </p>
+              </div>
             </div>
           )
         })}
