@@ -106,16 +106,32 @@ export function synthesizeDrugDetail(medicine: any): DrugDetail {
   }
   // No generic fallback — if there's no data, leave red empty
 
-  const overdose = cleanText(medicine?.overdose || "");
-  // Only build red_zone if we have real overdose data to show
-  const redZone: DrugDetail["red_zone"] = overdose
-    ? {
+  // Prefer structured JSONB red_zone if the editor filled it in; fall back to synthesizing from overdose text
+  let redZone: DrugDetail["red_zone"] = null;
+  if (medicine?.red_zone && typeof medicine.red_zone === "object") {
+    const rz = medicine.red_zone;
+    const hasSigns = Array.isArray(rz.overdose_signs) && rz.overdose_signs.length > 0;
+    const hasAction = Boolean(rz.action?.trim());
+    const hasPhone = Boolean(rz.phone_111) || Boolean(rz.phone_poisons?.trim());
+    if (hasSigns || hasAction || hasPhone) {
+      redZone = {
+        overdose_signs: rz.overdose_signs || [],
+        action: rz.action || "",
+        phone_111: Boolean(rz.phone_111),
+        phone_poisons: rz.phone_poisons || "",
+      };
+    }
+  } else {
+    const overdose = cleanText(medicine?.overdose || "");
+    if (overdose) {
+      redZone = {
         overdose_signs: [firstSentences(overdose, 1)],
         action: "Call 111 or the NZ Poisons Centre: 0800 764 766 immediately.",
         phone_111: true,
         phone_poisons: "0800 764 766",
-      }
-    : null;
+      };
+    }
+  }
 
   const interactions: DrugDetail["interactions"] = [];
   const drugInteractions = cleanText(medicine?.drug_interactions || "");
@@ -150,7 +166,7 @@ export function synthesizeDrugDetail(medicine: any): DrugDetail {
     side_effects: sideEffects,
     interactions,
     red_zone: redZone,
-    teach_back_quiz: null,
+    teach_back_quiz: medicine?.teach_back_quiz ?? null,
     funded_nz: Boolean(medicine?.funded_subsidised),
     funded_note: null,
     storage_instructions: cleanText(medicine?.storage || "") || null,
