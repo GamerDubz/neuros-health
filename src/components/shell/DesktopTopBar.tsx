@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { EmergencyDropdown } from "@/components/shell/EmergencyDropdown";
 
 export function DesktopTopBar() {
   return (
@@ -16,6 +17,7 @@ export function DesktopTopBar() {
         />
       </div>
       <div className="flex items-center gap-4">
+        <EmergencyDropdown />
         <button className="p-2 rounded-full text-on-surface-variant hover:text-primary transition-colors">
           <span className="material-symbols-outlined">notifications</span>
         </button>

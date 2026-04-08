@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={manrope.variable}>
+    <html lang="en" className={manrope.variable} suppressHydrationWarning>
       <head>
         {/* Material Symbols uses custom axes (FILL, GRAD, opsz) not supported by next/font — kept as direct link */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font, @next/next/google-font-display */}
@@ -37,7 +37,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <AppStoreProvider>{children}</AppStoreProvider>
       </body>
     </html>

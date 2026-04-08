@@ -1,12 +1,10 @@
 import { UserProfile } from "@/types/store";
 
 interface MedicationSidebarProps {
-  medicationCount: number;
   user: UserProfile;
 }
 
 export function MedicationSidebar({
-  medicationCount,
   user,
 }: MedicationSidebarProps) {
   return (
@@ -35,20 +33,6 @@ export function MedicationSidebar({
               No conditions logged.
             </span>
           )}
-        </div>
-      </div>
-
-      <div className="bg-primary-fixed/30 p-5 rounded-2xl flex items-center gap-4">
-        <div className="w-10 h-10 bg-primary-container text-white flex items-center justify-center rounded-2xl">
-          <span className="material-symbols-outlined">analytics</span>
-        </div>
-        <div>
-          <p className="font-bold text-on-surface">
-            {medicationCount} Active Medications
-          </p>
-          <p className="text-xs text-on-surface-variant">
-            Syncing with Health Log
-          </p>
         </div>
       </div>
     </div>

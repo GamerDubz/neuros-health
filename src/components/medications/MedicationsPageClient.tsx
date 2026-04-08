@@ -52,7 +52,7 @@ export default function MedicationsPageClient() {
           <MedicationListSection filteredMedications={filteredMedications} />
         </div>
 
-        <MedicationSidebar medicationCount={medications.length} user={user} />
+        <MedicationSidebar user={user} />
       </div>
     </div>
   );

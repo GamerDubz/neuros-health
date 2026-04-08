@@ -1,3 +1,5 @@
+import { CATEGORY_COLOURS } from "@/lib/db/ailments";
+
 interface CategoryOption {
   key: string;
   label: string;
@@ -26,23 +28,36 @@ export function HealthCategoryFilters({
   onSelectCategory,
 }: HealthCategoryFiltersProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-4 -mx-6 px-6 mb-6 no-scrollbar md:mx-0 md:px-0 md:overflow-visible md:flex-wrap">
-      {CATEGORY_OPTIONS.map((category) => (
-        <button
-          key={category.key}
-          onClick={() => onSelectCategory(category.key)}
-          className={`flex min-h-[48px] items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap active:scale-95 transition-all shrink-0 ${
-            selectedCategory === category.key
-              ? "bg-primary text-on-primary shadow-md"
-              : "bg-surface-container-lowest text-on-surface shadow-sm"
-          }`}
-        >
-          <span className="material-symbols-outlined text-base" aria-hidden>
-            {category.icon}
-          </span>
-          {category.label}
-        </button>
-      ))}
+    <div className="flex gap-2 flex-wrap pb-4 mb-4">
+      {CATEGORY_OPTIONS.map((category) => {
+        const colours =
+          CATEGORY_COLOURS[category.key] || CATEGORY_COLOURS.general;
+        const isSelected = selectedCategory === category.key;
+
+        return (
+          <button
+            key={category.key}
+            onClick={() => onSelectCategory(category.key)}
+            style={{
+              backgroundColor: isSelected ? colours.from : `${colours.from}15`,
+              color: isSelected ? colours.text : undefined,
+              borderColor: isSelected ? colours.from : `${colours.from}30`,
+            }}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold active:scale-95 transition-all border shadow-sm ${
+              isSelected ? "" : "text-on-surface"
+            }`}
+          >
+            <span
+              className="material-symbols-outlined text-base"
+              style={{ color: isSelected ? colours.text : colours.to }}
+              aria-hidden
+            >
+              {category.icon}
+            </span>
+            {category.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

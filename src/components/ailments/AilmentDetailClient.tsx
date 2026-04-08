@@ -50,20 +50,19 @@ export function AilmentDetailClient({ slug }: { slug: string }) {
 
   return (
     <>
-      {/* Mobile back button */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-surface/85 backdrop-blur-lg px-6 py-4 flex items-center gap-4 h-16 md:hidden">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white px-6 py-4 flex items-center gap-4 h-16 shadow-[0_1px_10px_rgba(0,0,0,0.02)]">
         <button
           onClick={() => router.push('/health')}
-          className="p-2 -ml-2 rounded-full text-primary active:scale-95 transition-transform"
+          className="p-1 -ml-1 rounded-full text-[#115E41] active:scale-95 transition-transform"
         >
           <span className="material-symbols-outlined text-[24px]" aria-hidden>arrow_back</span>
         </button>
-        <h2 className="font-bold text-base text-on-surface tracking-tight truncate">
+        <h2 className="font-bold text-[19px] text-[#101828] tracking-tight truncate">
           {ailment.common_name}
         </h2>
       </header>
 
-      <div className="pt-16 md:pt-0">
+      <div className="pt-16 pb-4 bg-[#F9FAFF]">
         <AilmentScaffold ailment={ailment} />
       </div>
     </>

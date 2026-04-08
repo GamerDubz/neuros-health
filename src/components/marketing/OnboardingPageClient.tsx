@@ -44,13 +44,15 @@ export default function OnboardingCarousel() {
 
   const handleNext = () => {
     if (currentSlide < SLIDES.length - 1) {
-      setCurrentSlide((prev) => prev + 1);
+      setCurrentSlide((prev) => Math.min(prev + 1, SLIDES.length - 1));
     } else {
       router.push("/signup");
     }
   };
 
-  const slide = SLIDES[currentSlide];
+  const slide = SLIDES[currentSlide] || SLIDES[SLIDES.length - 1];
+
+  if (!slide) return null;
 
   return (
     <div className="relative min-h-dvh bg-linear-to-br from-surface to-primary-container/20 flex flex-col justify-between overflow-hidden sm:justify-center sm:items-center">

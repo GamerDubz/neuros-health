@@ -58,12 +58,12 @@ export default function TrackerPage() {
             Last 7 Days
           </h2>
 
-          <div className="flex justify-between items-end h-[120px] gap-2">
+          <div className="flex justify-around items-end h-[320px] gap-2 px-2 mt-8">
             {adherenceData.map((d, i) => (
-              <div key={i} className="flex flex-col items-center gap-2 flex-1">
-                <div className="w-full h-[100px] bg-surface-container-high rounded-full relative overflow-hidden">
+              <div key={i} className="flex flex-col items-center gap-4">
+                <div className="w-12 sm:w-14 lg:w-16 h-[260px] bg-surface-container-high rounded-4xl relative overflow-hidden shadow-inner">
                   <div
-                    className="absolute bottom-0 left-0 right-0 rounded-full transition-[height] duration-500 ease-out"
+                    className="absolute bottom-0 left-0 right-0 rounded-4xl transition-[height] duration-500 ease-out"
                     style={{
                       height: `${d.percent}%`,
                       background: d.percent === 100
@@ -74,7 +74,7 @@ export default function TrackerPage() {
                     }}
                   />
                 </div>
-                <span className={`text-[0.65rem] font-extrabold ${d.isToday ? "text-primary" : "text-on-surface-variant"}`}>
+                <span className={`text-xs font-bold leading-none ${d.isToday ? "text-primary" : "text-on-surface-variant"}`}>
                   {d.dayName}
                 </span>
               </div>
@@ -85,7 +85,7 @@ export default function TrackerPage() {
 
       {/* Today's Log */}
       <section>
-        <h2 className="text-lg font-extrabold mb-6">Today's Log</h2>
+        <h2 className="text-lg font-extrabold mb-6">Today&apos;s Log</h2>
         <div className="flex flex-col gap-4">
           {medications.length === 0 ? (
             <p className="text-sm text-on-surface-variant">No medications added yet.</p>
@@ -96,7 +96,6 @@ export default function TrackerPage() {
                 <div
                   key={med.id}
                   className="flex justify-between items-center px-6 py-4 bg-surface-container-lowest rounded-2xl"
-                  style={{ borderLeft: `4px solid ${isLogged ? 'var(--color-primary)' : 'var(--color-surface-dim)'}` }}
                 >
                   <div className="flex flex-col">
                     <span className="text-base font-extrabold text-on-surface">{med.name}</span>

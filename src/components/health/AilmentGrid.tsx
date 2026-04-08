@@ -16,23 +16,13 @@ export function AilmentGrid({ ailments }: AilmentGridProps) {
           <Link
             key={ailment.id}
             href={`/health/ailments/${ailment.slug}`}
-            className="bg-surface-container-lowest p-5 rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)] active:bg-surface-container-low text-left active:scale-95 transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary group block"
+            style={{
+              backgroundColor: `${colours.from}15`, // Light tint of the category colour
+              borderColor: `${colours.from}30`,
+            }}
+            className="p-5 rounded-3xl border shadow-[0_10px_40px_rgba(21,28,39,0.04)] text-left hover:-translate-y-1 hover:shadow-lg active:scale-95 transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-primary group block"
           >
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
-              style={{
-                background: `linear-gradient(135deg, ${colours.from}, ${colours.to})`,
-              }}
-            >
-              <span
-                className="material-symbols-outlined text-xl"
-                style={{ color: colours.text }}
-                aria-hidden
-              >
-                health_and_safety
-              </span>
-            </div>
-            <h3 className="font-bold text-on-surface text-sm leading-tight mb-1 group-hover:text-primary transition-colors">
+            <h3 className="font-bold text-on-surface text-sm leading-tight mb-2 transition-colors">
               {ailment.common_name}
             </h3>
             <p className="text-xs text-on-surface-variant leading-snug line-clamp-2">

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function NotificationsPage() {
   const router = useRouter();
@@ -41,8 +40,10 @@ export default function NotificationsPage() {
     }
   ];
 
+  type NotificationItem = typeof notifications[0];
+
   // Group notifications
-  const grouped = notifications.reduce((acc: any, curr) => {
+  const grouped = notifications.reduce((acc: Record<string, NotificationItem[]>, curr) => {
     (acc[curr.group] = acc[curr.group] || []).push(curr);
     return acc;
   }, {});
@@ -74,16 +75,16 @@ export default function NotificationsPage() {
          </div>
 
          <div className="md:px-6">
-           {Object.entries(grouped).map(([group, notifs]: [string, any]) => (
+           {Object.entries(grouped).map(([group, notifs]) => (
              <div key={group} className="mb-6 animate-fade-in">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 pl-2">
                   {group}
                 </h2>
                 <div className="space-y-3">
-                  {notifs.map((n: any) => (
+                  {notifs.map((n) => (
                     <div 
                       key={n.id} 
-                      className={`bg-surface-container-lowest md:bg-surface-container-low p-4 rounded-2xl flex items-start gap-4 shadow-[0_10px_40px_rgba(21,28,39,0.04)] md:shadow-none transition-all cursor-pointer active:scale-[0.98] ${!n.read ? 'border-l-4 border-primary' : ''}`}
+                      className={`bg-surface-container-lowest md:bg-surface-container-low p-4 rounded-2xl flex items-start gap-4 shadow-[0_10px_40px_rgba(21,28,39,0.04)] md:shadow-none transition-all cursor-pointer active:scale-[0.98]`}
                     >
                        <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
                           n.type === 'reminder' ? 'bg-primary-fixed text-primary' :
@@ -120,8 +121,8 @@ export default function NotificationsPage() {
              <div className="w-24 h-24 bg-surface-container rounded-4xl flex items-center justify-center mb-6">
                <span className="material-symbols-outlined text-[40px] text-outline/40">notifications_paused</span>
              </div>
-             <p className="font-bold text-lg text-on-surface">You're all caught up</p>
-             <p className="text-sm text-on-surface-variant mt-2 max-w-[200px]">We'll notify you when it's time for your next dose.</p>
+             <p className="font-bold text-lg text-on-surface">You&apos;re all caught up</p>
+             <p className="text-sm text-on-surface-variant mt-2 max-w-[200px]">We&apos;ll notify you when it&apos;s time for your next dose.</p>
            </div>
          )}
       </div>
