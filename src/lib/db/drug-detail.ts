@@ -47,6 +47,9 @@ export type DrugDetail = {
   teach_back_quiz: TeachBackQuiz | null;
   funded_nz: boolean;
   funded_note: string | null;
+  storage_instructions: string | null;
+  pregnancy_note: string | null;
+  contraindications: string | null;
   healthify_url: string | null;
   medsafe_cmi_url: string | null;
   last_reviewed_date: string | null;

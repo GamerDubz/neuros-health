@@ -3,6 +3,14 @@ import type { DrugDetail } from "@/lib/db/drug-detail";
 export function RedZoneBox({ redZone }: { redZone: DrugDetail["red_zone"] }) {
   if (!redZone) return null;
 
+  // Don't render if every field is empty/false
+  const hasSigns = (redZone.overdose_signs || []).length > 0;
+  const hasAction = Boolean(redZone.action?.trim());
+  const hasPhone111 = Boolean(redZone.phone_111);
+  const hasPoisons = Boolean(redZone.phone_poisons?.trim());
+
+  if (!hasSigns && !hasAction && !hasPhone111 && !hasPoisons) return null;
+
   return (
     <div className="rounded-2xl bg-error-container border-l-4 border-error p-5">
       <div className="flex items-center gap-2 mb-3">
@@ -13,7 +21,8 @@ export function RedZoneBox({ redZone }: { redZone: DrugDetail["red_zone"] }) {
           Overdose / Emergency
         </h3>
       </div>
-      {redZone.overdose_signs?.length > 0 && (
+
+      {hasSigns && (
         <>
           <p className="text-xs font-bold text-on-error-container uppercase mb-1">Warning signs</p>
           <ul className="text-sm text-on-surface-variant mb-4 space-y-1">
@@ -26,28 +35,32 @@ export function RedZoneBox({ redZone }: { redZone: DrugDetail["red_zone"] }) {
           </ul>
         </>
       )}
-      <p className="text-sm font-semibold text-on-surface mb-3">{redZone.action}</p>
-      <div className="flex gap-2">
-        {redZone.phone_111 && (
-          <a
-            href="tel:111"
-            className="flex-1 flex items-center justify-center gap-2 bg-error text-white rounded-full h-12 font-bold text-sm"
-          >
-            <span className="material-symbols-outlined text-[18px]" aria-hidden>
-              call
-            </span>
-            Call 111
-          </a>
-        )}
-        {redZone.phone_poisons && (
-          <a
-            href={`tel:${redZone.phone_poisons.replace(/\s+/g, "")}`}
-            className="flex-1 flex items-center justify-center gap-2 bg-surface-container-lowest border-2 border-error text-error rounded-full h-12 font-bold text-sm"
-          >
-            Poisons: {redZone.phone_poisons}
-          </a>
-        )}
-      </div>
+
+      {hasAction && (
+        <p className="text-sm font-semibold text-on-surface mb-3">{redZone.action}</p>
+      )}
+
+      {(hasPhone111 || hasPoisons) && (
+        <div className="flex gap-2">
+          {hasPhone111 && (
+            <a
+              href="tel:111"
+              className="flex-1 flex items-center justify-center gap-2 bg-error text-white rounded-full h-12 font-bold text-sm"
+            >
+              <span className="material-symbols-outlined text-[18px]" aria-hidden>call</span>
+              Call 111
+            </a>
+          )}
+          {hasPoisons && (
+            <a
+              href={`tel:${redZone.phone_poisons.replace(/\s+/g, "")}`}
+              className="flex-1 flex items-center justify-center gap-2 bg-surface-container-lowest border-2 border-error text-error rounded-full h-12 font-bold text-sm"
+            >
+              Poisons: {redZone.phone_poisons}
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 }

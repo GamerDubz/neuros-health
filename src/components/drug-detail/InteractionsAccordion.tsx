@@ -12,12 +12,16 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; label: string 
 
 export function InteractionsAccordion({ interactions }: { interactions: DrugDetail["interactions"] }) {
   const [search, setSearch] = useState("");
+
+  // Don't render if there are no interactions
+  if (!interactions || interactions.length === 0) return null;
+
   const filteredInteractions = interactions.filter((item) =>
     item.interactant?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <Accordion icon="sync_alt" title="Interactions" count={interactions?.length || 0}>
+    <Accordion icon="sync_alt" title="Interactions" count={interactions.length}>
       {!interactions.length ? (
         <p className="text-sm text-on-surface-variant text-center py-6 px-5">No interactions recorded.</p>
       ) : (

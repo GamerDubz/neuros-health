@@ -10,51 +10,46 @@ const TIERS = [
 export function SideEffectsAccordion({ sideEffects }: { sideEffects: DrugDetail["side_effects"] }) {
   const hasAny = TIERS.some((tier) => (sideEffects?.[tier.key] || []).length > 0);
 
+  // Don't render the accordion at all if there's nothing to show
+  if (!hasAny) return null;
+
   return (
     <Accordion icon="warning" title="Side Effects">
-      {!hasAny ? (
-        <p className="text-sm text-on-surface-variant text-center py-6">
-          No specific side effects recorded. Always tell your pharmacist if something feels wrong.
-        </p>
-      ) : (
-        <>
-          {TIERS.map((tier) => {
-            const items = sideEffects?.[tier.key] || [];
-            if (!items.length) return null;
+      <>
+        {TIERS.map((tier) => {
+          const items = sideEffects?.[tier.key] || [];
+          if (!items.length) return null;
 
-            return (
-              <div key={tier.key}>
-                <div className={`px-5 py-2 ${tier.headerBg} flex items-center gap-2`}>
-                  <span className={`w-2.5 h-2.5 rounded-full ${tier.dot}`} aria-hidden />
-                  <span className={`text-sm font-bold ${tier.headerText}`}>{tier.label}</span>
-                </div>
-                <div className="px-5 py-3 space-y-3">
-                  {items.map((item, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${tier.dot}`} />
-                      <div>
-                        <span className="font-semibold text-on-surface text-sm">{item.effect}</span>
-                        <p className="text-on-surface-variant text-sm mt-0.5">{item.note}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {tier.key === "red" && (
-                    <a
-                      href="tel:111"
-                      className="flex items-center justify-center gap-2 bg-error text-white rounded-full h-12 font-bold text-sm mt-2 w-full"
-                    >
-                      <span className="material-symbols-outlined text-[18px]" aria-hidden>
-                        call
-                      </span>
-                      Call 111 Now
-                    </a>
-                  )}
-                </div>
+          return (
+            <div key={tier.key}>
+              <div className={`px-5 py-2 ${tier.headerBg} flex items-center gap-2`}>
+                <span className={`w-2.5 h-2.5 rounded-full ${tier.dot}`} aria-hidden />
+                <span className={`text-sm font-bold ${tier.headerText}`}>{tier.label}</span>
               </div>
-            );
-          })}
-        </>
-      )}
+              <div className="px-5 py-3 space-y-3">
+                {items.map((item, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${tier.dot}`} />
+                    <div>
+                      <span className="font-semibold text-on-surface text-sm">{item.effect}</span>
+                      {item.note && <p className="text-on-surface-variant text-sm mt-0.5">{item.note}</p>}
+                    </div>
+                  </div>
+                ))}
+                {tier.key === "red" && (
+                  <a
+                    href="tel:111"
+                    className="flex items-center justify-center gap-2 bg-error text-white rounded-full h-12 font-bold text-sm mt-2 w-full"
+                  >
+                    <span className="material-symbols-outlined text-[18px]" aria-hidden>call</span>
+                    Call 111 Now
+                  </a>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </>
     </Accordion>
   );
 }

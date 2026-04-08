@@ -9,6 +9,8 @@ export function HowToTakeAccordion({
   items: DrugDetail["how_to_take"];
   onCollapse?: () => void;
 }) {
+  if (!items || items.length === 0) return null;
+
   return (
     <Accordion icon="medication" title="How to Take" onCollapse={onCollapse}>
       <div className="px-5 pb-5 space-y-3">

@@ -97,25 +97,25 @@ export function synthesizeDrugDetail(medicine: any): DrugDetail {
     });
   }
 
+  // Only add serious/red effects if we actually have text for them
   if (seriousEffects) {
     sideEffects.red.push({
       effect: "Serious reactions",
-      note: firstSentences(seriousEffects, 2) || "Stop and call 111 immediately.",
-    });
-  } else {
-    sideEffects.red.push({
-      effect: "Severe allergic reaction",
-      note: "Stop and call 111 immediately if you get rash, swelling, or trouble breathing.",
+      note: firstSentences(seriousEffects, 2),
     });
   }
+  // No generic fallback — if there's no data, leave red empty
 
   const overdose = cleanText(medicine?.overdose || "");
-  const redZone: NonNullable<DrugDetail["red_zone"]> = {
-    overdose_signs: overdose ? [firstSentences(overdose, 1)] : ["Feeling very unwell", "Unusual symptoms"],
-    action: "Call 111 or the NZ Poisons Centre: 0800 764 766 immediately.",
-    phone_111: true,
-    phone_poisons: "0800 764 766",
-  };
+  // Only build red_zone if we have real overdose data to show
+  const redZone: DrugDetail["red_zone"] = overdose
+    ? {
+        overdose_signs: [firstSentences(overdose, 1)],
+        action: "Call 111 or the NZ Poisons Centre: 0800 764 766 immediately.",
+        phone_111: true,
+        phone_poisons: "0800 764 766",
+      }
+    : null;
 
   const interactions: DrugDetail["interactions"] = [];
   const drugInteractions = cleanText(medicine?.drug_interactions || "");
@@ -153,6 +153,9 @@ export function synthesizeDrugDetail(medicine: any): DrugDetail {
     teach_back_quiz: null,
     funded_nz: Boolean(medicine?.funded_subsidised),
     funded_note: null,
+    storage_instructions: cleanText(medicine?.storage || "") || null,
+    pregnancy_note: cleanText(medicine?.pregnancy_breastfeeding || "") || null,
+    contraindications: cleanText(medicine?.who_should_not_take || "") || null,
     healthify_url: medicine?.healthify_url || null,
     medsafe_cmi_url: medicine?.cmi_pdf_url || null,
     last_reviewed_date: medicine?.last_reviewed || null,
