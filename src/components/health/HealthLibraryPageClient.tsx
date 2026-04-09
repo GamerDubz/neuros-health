@@ -14,7 +14,7 @@ export default function HealthLibraryPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setLoading(true)
+    // We already set loading to true when the category is selected via the filter
     const load = async () => {
       const data = selectedCategory === 'all'
         ? await getAllAilments(500)
@@ -79,7 +79,10 @@ export default function HealthLibraryPage() {
           {/* Category chips */}
           <HealthCategoryFilters
             selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
+            onSelectCategory={(cat) => {
+              setSelectedCategory(cat);
+              setLoading(true);
+            }}
           />
 
           {/* Grid */}

@@ -3,7 +3,7 @@
 import { useAppStore } from "@/hooks/useAppStore";
 import { getTreeStage, getDaysToNextStage } from "@/lib/utils";
 import Link from "next/link";
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { TreeHeroCard } from "@/components/HealthTree/TreeHeroCard";
 import { FirstMedicationSetup } from "@/components/FirstMedicationSetup";
@@ -12,12 +12,9 @@ import { AnimatePresence } from "framer-motion";
 function DashboardContent() {
   const { user, logs, checkIn, medications } = useAppStore();
   const searchParams = useSearchParams();
-  const [showSetup, setShowSetup] = useState(false);
+  const isSetupParam = searchParams.get("setup") === "true";
+  const [showSetup, setShowSetup] = useState(isSetupParam);
   const [pulseKey, setPulseKey] = useState(0);
-
-  useEffect(() => {
-    if (searchParams.get("setup") === "true") setShowSetup(true);
-  }, [searchParams]);
 
   const today = new Date();
   const dateString = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -77,7 +74,7 @@ function DashboardContent() {
           <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-[0_10px_40px_rgba(21,28,39,0.04)]">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-xl font-extrabold text-on-surface">Today's Meds</h3>
+                <h3 className="text-xl font-extrabold text-on-surface">Today&apos;s Meds</h3>
                 <p className="text-sm text-on-surface-variant mt-1">{takenCount} of {medications.length} taken</p>
               </div>
             </div>
@@ -101,14 +98,14 @@ function DashboardContent() {
                       }`}
                     >
                       <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${taken ? "bg-primary-fixed-dim opacity-70" : "bg-secondary-fixed"}`}>
-                          <span className="material-symbols-outlined text-secondary">medication</span>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-gray-200">
+                          <span className="material-symbols-outlined text-black">medication</span>
                         </div>
                         <div>
-                          <h4 className={`font-bold text-on-surface ${taken ? "line-through decoration-on-surface-variant/40" : ""}`}>
+                          <h4 className={`font-bold transition-all duration-300 ${taken ? "text-outline/70 line-through decoration-on-surface-variant/70 decoration-2" : "text-on-surface"}`}>
                             {med.name}
                           </h4>
-                          <p className="text-xs text-on-surface-variant font-semibold mt-0.5">
+                          <p className={`text-xs font-semibold mt-0.5 transition-all duration-300 ${taken ? "text-outline/70" : "text-on-surface-variant"}`}>
                             {taken ? `${med.dose} • Taken` : `Due ${med.time[0] || "—"}`}
                           </p>
                         </div>

@@ -44,7 +44,7 @@ export function MedicationListSection({
             >
               <div className="flex items-start justify-between">
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-primary-fixed/30 rounded-full flex items-center justify-center text-primary">
+                  <div className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center text-black">
                     <span
                       className="material-symbols-outlined"
                       style={{ fontVariationSettings: "'FILL' 1" }}
