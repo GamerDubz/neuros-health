@@ -58,12 +58,17 @@ export default function TrackerPage() {
             Last 7 Days
           </h2>
 
-          <div className="flex justify-around items-end h-[320px] gap-2 px-2 mt-8">
+          <div className="flex justify-around items-end gap-1.5 px-1 pt-4 pb-1">
             {adherenceData.map((d, i) => (
-              <div key={i} className="flex flex-col items-center gap-4">
-                <div className="w-12 sm:w-14 lg:w-16 h-[260px] bg-surface-container-high rounded-4xl relative overflow-hidden shadow-inner">
+              <div key={i} className="flex flex-col items-center gap-2 flex-1">
+                {/* Percentage label above bar */}
+                <span className="text-[10px] font-bold text-on-surface-variant h-4 flex items-center">
+                  {d.percent > 0 ? `${d.percent}%` : ''}
+                </span>
+                {/* Bar track */}
+                <div className="w-full h-36 sm:h-48 bg-surface-container-high rounded-2xl relative overflow-hidden">
                   <div
-                    className="absolute bottom-0 left-0 right-0 rounded-4xl transition-[height] duration-500 ease-out"
+                    className="absolute bottom-0 left-0 right-0 rounded-2xl transition-[height] duration-500 ease-out"
                     style={{
                       height: `${d.percent}%`,
                       background: d.percent === 100
@@ -74,7 +79,8 @@ export default function TrackerPage() {
                     }}
                   />
                 </div>
-                <span className={`text-xs font-bold leading-none ${d.isToday ? "text-primary" : "text-on-surface-variant"}`}>
+                {/* Day label */}
+                <span className={`text-[11px] font-bold leading-none ${d.isToday ? "text-primary" : "text-on-surface-variant"}`}>
                   {d.dayName}
                 </span>
               </div>
