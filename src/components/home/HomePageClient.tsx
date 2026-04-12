@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { TreeHeroCard } from "@/components/HealthTree/TreeHeroCard";
 import { FirstMedicationSetup } from "@/components/FirstMedicationSetup";
 import { AnimatePresence } from "framer-motion";
+import DailyWellbeingCard from "@/components/home/DailyWellbeingCard";
 
 function DashboardContent() {
   const { user, logs, checkIn, medications } = useAppStore();
@@ -161,16 +162,7 @@ function DashboardContent() {
 
           </div>
 
-          <div className="rounded-3xl overflow-hidden h-40 relative group cursor-pointer shadow-md">
-            <div className="absolute inset-0 bg-on-surface z-0" />
-            <div className="absolute inset-0 bg-linear-to-br from-primary-fixed/20 to-transparent z-10 opacity-50" />
-            <div className="absolute bottom-4 left-5 z-20">
-              <h3 className="text-white font-extrabold text-lg flex items-center gap-2">
-                <span className="material-symbols-outlined">self_improvement</span> Daily Mindfulness
-              </h3>
-              <p className="text-white/80 text-xs mt-1 font-medium">5 minute breathing exercise</p>
-            </div>
-          </div>
+          <DailyWellbeingCard />
         </div>
 
       </div>
