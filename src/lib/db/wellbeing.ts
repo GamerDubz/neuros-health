@@ -4,6 +4,14 @@ import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
 
+// ---------- Session-level cache ----------
+// Avoids re-fetching Supabase on every page navigation within a session.
+// Each value is tiny (~1 KB), so RAM impact is negligible.
+
+let _dailyTipCache: WellbeingTopic | null = null;
+let _dailyTipDate = "";
+const _slugCache = new Map<string, WellbeingTopic | null>();
+
 export interface WellbeingTopic {
   id: number;
   slug: string;
@@ -52,6 +60,9 @@ function getDayOfYear(date: Date): number {
 }
 
 export async function getDailyWellbeingTip(): Promise<WellbeingTopic | null> {
+  const today = new Date().toISOString().split("T")[0];
+  if (_dailyTipCache && _dailyTipDate === today) return _dailyTipCache;
+
   const { data } = await supabase
     .from("wellbeing_topics")
     .select("id, slug, topic_name, meta_description")
@@ -76,7 +87,10 @@ export async function getDailyWellbeingTip(): Promise<WellbeingTopic | null> {
     if (isSeasonal) pool.push(topic, topic, topic);
   }
 
-  return pool[getDayOfYear(new Date()) % pool.length] as WellbeingTopic;
+  const result = pool[getDayOfYear(new Date()) % pool.length] as WellbeingTopic;
+  _dailyTipCache = result;
+  _dailyTipDate = today;
+  return result;
 }
 
 export async function searchWellbeing(query: string, limit = 10): Promise<WellbeingTopic[]> {
@@ -92,8 +106,11 @@ export async function searchWellbeing(query: string, limit = 10): Promise<Wellbe
 }
 
 export async function getWellbeingBySlug(slug: string): Promise<WellbeingTopic | null> {
+  if (_slugCache.has(slug)) return _slugCache.get(slug)!;
   const { data } = await supabase.from("wellbeing_topics").select("*").eq("slug", slug).single();
-  return (data as WellbeingTopic) || null;
+  const result = (data as WellbeingTopic) || null;
+  _slugCache.set(slug, result);
+  return result;
 }
 
 export async function getWellbeingByKeyword(keyword: string, limit = 10) {

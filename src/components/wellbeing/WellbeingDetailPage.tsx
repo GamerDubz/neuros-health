@@ -4,6 +4,55 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getWellbeingBySlug, type WellbeingTopic } from "@/lib/db/wellbeing";
 
+// Strip Healthify promotional text injected at the top of some content fields.
+// Pattern: "You can now add Healthify as a preferred source on Google. Click here
+// to see us when you search Google. × " and similar variations.
+function cleanContent(text: string): string {
+  return text
+    .replace(/You can now add Healthify[^×]*×\s*/gi, "")
+    .replace(/Click here to see us when you search Google\.?\s*/gi, "")
+    .trim();
+}
+
+// Split a block of text into readable paragraphs.
+// Respects existing double-newlines; otherwise groups every 3 sentences.
+function toParagraphs(text: string): string[] {
+  const cleaned = cleanContent(text);
+
+  // If the text already has paragraph breaks, use them
+  const byDoubleNewline = cleaned.split(/\n{2,}/);
+  if (byDoubleNewline.length > 1) {
+    return byDoubleNewline.map((p) => p.replace(/\n/g, " ").trim()).filter(Boolean);
+  }
+
+  // Single newlines → treat each line as its own paragraph
+  const byNewline = cleaned.split(/\n/);
+  if (byNewline.length > 1) {
+    return byNewline.map((p) => p.trim()).filter(Boolean);
+  }
+
+  // One big block — split into sentences and group every 3
+  const sentences = cleaned.match(/[^.!?]+[.!?]+/g) || [cleaned];
+  const paragraphs: string[] = [];
+  for (let i = 0; i < sentences.length; i += 3) {
+    paragraphs.push(sentences.slice(i, i + 3).join(" ").trim());
+  }
+  return paragraphs.filter(Boolean);
+}
+
+function ContentBlock({ text }: { text: string }) {
+  const paragraphs = toParagraphs(text);
+  return (
+    <div className="space-y-3">
+      {paragraphs.map((p, i) => (
+        <p key={i} className="text-sm text-on-surface-variant leading-relaxed">
+          {p}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 export default function WellbeingDetailPage({ slug }: { slug: string }) {
   const [topic, setTopic] = useState<WellbeingTopic | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +105,7 @@ export default function WellbeingDetailPage({ slug }: { slug: string }) {
         </h1>
         {topic.meta_description && (
           <p className="text-base text-on-surface-variant leading-relaxed">
-            {topic.meta_description}
+            {cleanContent(topic.meta_description)}
           </p>
         )}
       </header>
@@ -65,9 +114,7 @@ export default function WellbeingDetailPage({ slug }: { slug: string }) {
       {topic.overview && (
         <section className="space-y-3">
           <h2 className="text-lg font-extrabold text-on-surface">Overview</h2>
-          <div className="text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">
-            {topic.overview}
-          </div>
+          <ContentBlock text={topic.overview} />
         </section>
       )}
 
@@ -80,9 +127,7 @@ export default function WellbeingDetailPage({ slug }: { slug: string }) {
             </span>
             Key Takeaways
           </h2>
-          <div className="text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">
-            {topic.key_messages}
-          </div>
+          <ContentBlock text={topic.key_messages} />
         </section>
       )}
 
@@ -90,9 +135,7 @@ export default function WellbeingDetailPage({ slug }: { slug: string }) {
       {topic.main_content && (
         <section className="space-y-3">
           <h2 className="text-lg font-extrabold text-on-surface">More Information</h2>
-          <div className="text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">
-            {topic.main_content}
-          </div>
+          <ContentBlock text={topic.main_content} />
         </section>
       )}
 
@@ -105,9 +148,7 @@ export default function WellbeingDetailPage({ slug }: { slug: string }) {
             </span>
             Tips &amp; Advice
           </h2>
-          <div className="text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">
-            {topic.tips_advice}
-          </div>
+          <ContentBlock text={topic.tips_advice} />
         </section>
       )}
 
@@ -118,9 +159,7 @@ export default function WellbeingDetailPage({ slug }: { slug: string }) {
             <span className="material-symbols-outlined text-[20px]">support</span>
             Resources &amp; Support
           </h2>
-          <div className="text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">
-            {topic.resources_support}
-          </div>
+          <ContentBlock text={topic.resources_support} />
         </section>
       )}
 
